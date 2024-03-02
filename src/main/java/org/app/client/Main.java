@@ -11,7 +11,8 @@ public class Main {
         Scanner scan = new Scanner(System.in);
         Login.autenticar(scan);
         while(true){
-            TaskManager.taskKillLinux();
+            TaskManager.tasksKillWindows();
+            DriverManagerWindows.removerDriversInvalidos();
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {

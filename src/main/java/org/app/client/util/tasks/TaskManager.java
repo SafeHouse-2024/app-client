@@ -10,7 +10,7 @@ public class TaskManager {
     private static String comandoLinux = "killall -KILL %s";
 
     private static List<String> processosProibidosWindows(){
-        return List.of("Discord.exe", "Whatsapp.exe");
+        return List.of("WhatsApp.exe", "firefox.exe");
     }
 
     private static List<String> processosProibidosLinux(){

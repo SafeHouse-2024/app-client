@@ -31,14 +31,13 @@ public class DriverManagerWindows {
     public static void removerDriversInvalidos(){
         List<String> driversInvalidos = driversInvalidos();
         System.out.println(driversInvalidos);
-//        driversInvalidos.forEach(drive -> PowerShell.executeSingleCommand("New-Object -comObject Shell.Application.Namespace(17).ParseName(\"%s:\").InvokeVerb(\"Eject\")".formatted(drive)));
+        driversInvalidos.forEach(drive -> PowerShell.executeSingleCommand("(New-Object -comObject Shell.Application).Namespace(17).ParseName(\"%s:\").InvokeVerb(\"Eject\")".formatted(drive)));
     }
 
     private static List<String> driversInvalidos(){
         atualizarDriversConectados();
         // Drivers que virão do banco de dados;
-        List<String> driversValidos = List.of("C", "D");
-        List<String> driversInvalidos = List.of("E", "H", "Z", "D", "C");
+        List<String> driversValidos = List.of("C");
         return driverPermitidos.keySet().stream()
                 .filter(driver -> !driversValidos.contains(driver)).toList();
     }
