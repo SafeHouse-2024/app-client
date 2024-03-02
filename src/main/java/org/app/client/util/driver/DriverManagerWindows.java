@@ -31,7 +31,7 @@ public class DriverManagerWindows {
     public static void removerDriversInvalidos(){
         List<String> driversInvalidos = driversInvalidos();
         System.out.println(driversInvalidos);
-        driversInvalidos.forEach(drive -> PowerShell.executeSingleCommand("New-Object -comObject Shell.Application.Namespace(17).ParseName(\"%s:\").InvokeVerb(\"Eject\")".formatted(drive)));
+//        driversInvalidos.forEach(drive -> PowerShell.executeSingleCommand("New-Object -comObject Shell.Application.Namespace(17).ParseName(\"%s:\").InvokeVerb(\"Eject\")".formatted(drive)));
     }
 
     private static List<String> driversInvalidos(){
