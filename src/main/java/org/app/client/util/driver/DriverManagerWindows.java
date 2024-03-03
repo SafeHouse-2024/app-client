@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DriverManagerWindows {
 
@@ -29,17 +30,21 @@ public class DriverManagerWindows {
     }
 
     public static void removerDriversInvalidos(){
-        List<String> driversInvalidos = driversInvalidos();
-        System.out.println(driversInvalidos);
-        driversInvalidos.forEach(drive -> PowerShell.executeSingleCommand("(New-Object -comObject Shell.Application).Namespace(17).ParseName(\"%s:\").InvokeVerb(\"Eject\")".formatted(drive)));
+        driversInvalidos().forEach(drive -> PowerShell.executeSingleCommand("(New-Object -comObject Shell.Application).Namespace(17).ParseName(\"%s:\").InvokeVerb(\"Eject\")".formatted(drive)));
     }
 
     private static List<String> driversInvalidos(){
         atualizarDriversConectados();
         // Drivers que virão do banco de dados;
         List<String> driversValidos = List.of("C");
-        return driverPermitidos.keySet().stream()
-                .filter(driver -> !driversValidos.contains(driver)).toList();
+        List<String> driversExistentes = new ArrayList<>();
+        driverPermitidos.forEach((key, value) -> {
+            if (value) {
+                driversExistentes.add(key);
+            }
+        });
+        return driversExistentes.stream()
+                .filter(driver -> !driversValidos.contains(driver)).collect(Collectors.toList());
     }
 
 }
