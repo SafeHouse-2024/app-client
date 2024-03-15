@@ -17,22 +17,29 @@ public class TaskManager {
         return List.of("glaclient-linux", "Discord");
     }
 
-    public static void tasksKillWindows(){
+
+    public static void taskKill(String so){
+        if(so.contains("win")){
+            tasksKillWindows();
+        } else if (so.contains("nux")) {
+            taskKillLinux();
+        }
+    }
+
+    private static void tasksKillWindows(){
         processosProibidosWindows().forEach(processo -> {
             try {
                 Runtime.getRuntime().exec(String.format(comandoWindows, processo));
-                System.out.println("Matando o processo %s".formatted(processo));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
     }
 
-    public static void taskKillLinux(){
+    private static void taskKillLinux(){
         processosProibidosLinux().forEach(processo -> {
             try{
                 Runtime.getRuntime().exec(String.format(comandoLinux, processo));
-                System.out.println("Matando o processo %s".formatted(processo));
             }catch (IOException e){
                 throw new RuntimeException(e);
             }
