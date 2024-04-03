@@ -13,10 +13,10 @@ public class Main {
     public static void main(String[] args) {
         Looca looca = new Looca();
         Scanner scanner = new Scanner(System.in);
-        Login.autenticar();
         String sistemaOperacional = System.getProperty("os.name");
         String user = sistemaOperacional.contains("nux") ? System.getProperty("user.name") : null;
-
+        
+        Login.autenticar(scanner);
         System.out.println("Vamos passar informações do seu computador ->");
         // String sistemaOperacional = looca.getSistema().getSistemaOperacional();
         String processador = looca.getProcessador().getNome();

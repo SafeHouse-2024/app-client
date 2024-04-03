@@ -9,9 +9,8 @@ public class Login {
     private static Map<String, String> acesso = new HashMap<>();
 
 
-    public static void autenticar() {
+    public static void autenticar(Scanner scanner) {
 
-        Scanner scanner = new Scanner(System.in);
         acesso.put("admin", "admin");
 
         while (true) {
@@ -27,8 +26,6 @@ public class Login {
                 System.out.println("Usuário não autenticado");
             }
         }
-
-        scanner.close();
     }
 
     private static boolean autenticar(Map<String, String> acesso, String usuario, String senha){
