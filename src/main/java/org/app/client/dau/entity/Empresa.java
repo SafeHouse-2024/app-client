@@ -10,6 +10,15 @@ public class Empresa {
 
   public Empresa() {
   }
+  public Empresa(Object empresa){
+    Empresa empresa1 = (Empresa) empresa;
+    this.idEmpresa = empresa1.getIdEmpresa();
+    this.nome = empresa1.getNome();
+    this.email = empresa1.getEmail();
+    this.razaoSocial = empresa1.getRazaoSocial();
+    this.telefone = empresa1.getTelefone();
+    this.cnpj = empresa1.getCnpj();
+  }
 
   public Integer getIdEmpresa() {
     return idEmpresa;
