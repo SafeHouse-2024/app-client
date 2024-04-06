@@ -11,6 +11,7 @@ public class Empresa {
   public Empresa() {
   }
   public Empresa(Object empresa){
+    // Transforma o objeto em Empresa
     Empresa empresa1 = (Empresa) empresa;
     this.idEmpresa = empresa1.getIdEmpresa();
     this.nome = empresa1.getNome();
