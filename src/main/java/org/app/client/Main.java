@@ -2,6 +2,7 @@ package org.app.client;
 
 import java.util.Scanner;
 
+import org.app.client.dau.controller.EmpresaController;
 import org.app.client.login.Login;
 import org.app.client.util.ExecutarPrograma;
 
@@ -13,6 +14,9 @@ public class Main {
     public static void main(String[] args) {
         Looca looca = new Looca();
         Scanner scanner = new Scanner(System.in);
+        EmpresaController empresaController = new EmpresaController();
+        empresaController.cadastrarEmpresa();
+
         String sistemaOperacional = System.getProperty("os.name");
         String user = sistemaOperacional.contains("nux") ? System.getProperty("user.name") : null;
         
