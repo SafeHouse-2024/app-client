@@ -1,4 +1,4 @@
-package org.app.client.dau.entity;
+package org.app.client.dao.entity;
 
 public class Empresa {
   private Integer idEmpresa;
@@ -10,15 +10,14 @@ public class Empresa {
 
   public Empresa() {
   }
-  public Empresa(Object empresa){
-    // Transforma o objeto em Empresa
-    Empresa empresa1 = (Empresa) empresa;
-    this.idEmpresa = empresa1.getIdEmpresa();
-    this.nome = empresa1.getNome();
-    this.email = empresa1.getEmail();
-    this.razaoSocial = empresa1.getRazaoSocial();
-    this.telefone = empresa1.getTelefone();
-    this.cnpj = empresa1.getCnpj();
+
+  public Empresa(Integer idEmpresa, String nome, String email, String razaoSocial, String telefone, String cnpj) {
+    this.idEmpresa = idEmpresa;
+    this.nome = nome;
+    this.email = email;
+    this.razaoSocial = razaoSocial;
+    this.telefone = telefone;
+    this.cnpj = cnpj;
   }
 
   public Integer getIdEmpresa() {

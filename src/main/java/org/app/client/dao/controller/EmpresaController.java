@@ -1,10 +1,8 @@
-package org.app.client.dau.controller;
+package org.app.client.dao.controller;
 
 import org.app.client.conexao.Conexao;
-import org.app.client.dau.entity.Empresa;
+import org.app.client.dao.entity.Empresa;
 import org.springframework.jdbc.core.*;
-
-import java.util.List;
 
 public class EmpresaController {
   Conexao conexao = new Conexao();
@@ -14,9 +12,8 @@ public class EmpresaController {
 
 //    List<Empresa> empresas = getConexao.query("SELECT * FROM empresa", new BeanPropertyRowMapper<Empresa>(Empresa.class));
 
-//    int alteracoes = getConexao.update("INSERT INTO empresa(nome, email, razaoSocial, cnpj) VALUES ('Spectra', 'spectra@sptech.school', 'Spectra Machine', '12345678901234')");
-    Object spectra = getConexao.queryForObject("SELECT * FROM empresa where nome = 'Spectra'", new BeanPropertyRowMapper(Empresa.class));
-    Empresa empresa = new Empresa(spectra);
+//    int alteracoes = getConexao.update("INSERT INTO Empresa(nome, email, razaoSocial, cnpj) VALUES ('Spectra', 'spectra@sptech.school', 'Spectra Machine', '12345678901234')");
+    Empresa empresa = getConexao.queryForObject("SELECT * FROM Empresa where nome = 'Spectra'", new BeanPropertyRowMapper<>(Empresa.class));
 
 
     System.out.println("""

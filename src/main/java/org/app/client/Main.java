@@ -2,7 +2,7 @@ package org.app.client;
 
 import java.util.Scanner;
 
-import org.app.client.dau.controller.EmpresaController;
+import org.app.client.dao.controller.EmpresaController;
 import org.app.client.login.Login;
 import org.app.client.util.ExecutarPrograma;
 
