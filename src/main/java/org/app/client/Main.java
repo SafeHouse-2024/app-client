@@ -2,7 +2,9 @@ package org.app.client;
 
 import java.util.Scanner;
 
+import org.app.client.dao.controller.ComputadorController;
 import org.app.client.dao.controller.EmpresaController;
+import org.app.client.dao.entity.Computador;
 import org.app.client.login.Login;
 import org.app.client.util.ExecutarPrograma;
 
@@ -15,7 +17,9 @@ public class Main {
         Looca looca = new Looca();
         Scanner scanner = new Scanner(System.in);
         EmpresaController empresaController = new EmpresaController();
+        ComputadorController computadorController = new ComputadorController();
         empresaController.cadastrarEmpresa();
+        computadorController.ativarMaquina(1);
 
         String sistemaOperacional = System.getProperty("os.name");
         String user = sistemaOperacional.contains("nux") ? System.getProperty("user.name") : null;
