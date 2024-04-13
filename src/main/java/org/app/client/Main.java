@@ -2,14 +2,14 @@ package org.app.client;
 
 import java.util.Scanner;
 
-import org.app.client.dao.controller.ComputadorController;
-import org.app.client.dao.controller.EmpresaController;
+import org.app.client.dao.controller.*;
+import org.app.client.dao.entity.Componente;
 import org.app.client.dao.entity.Computador;
 import org.app.client.login.Login;
 import org.app.client.util.ExecutarPrograma;
 
 import com.github.britooo.looca.api.core.Looca;
-
+import org.checkerframework.checker.units.qual.C;
 
 
 public class Main {
@@ -18,9 +18,17 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         EmpresaController empresaController = new EmpresaController();
         ComputadorController computadorController = new ComputadorController();
+        ComponenteController componenteController = new ComponenteController();
+        CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
+        RegistroComponenteController registroComponenteController = new RegistroComponenteController();
+
         empresaController.cadastrarEmpresa();
         computadorController.ativarMaquina(1);
-        computadorController.buscarMaquina("00:1B:44:11:3A:B7");
+        Computador computador = computadorController.buscarMaquina("00:1B:44:11:3A:B7");
+        componenteController.adicionarComponente("CPU", computador.getIdComputador());
+        Componente cpu = componenteController.pegarComponente(computador.getIdComputador());
+        caracteristicaComponenteController.adicionarCaracteristica("Fabricante", looca.getProcessador().getFabricante(), cpu.getIdComponente());
+        registroComponenteController.adicionarRegistro("Taxa Uso", String.valueOf(looca.getProcessador().getUso()), cpu.getIdComponente());
 
         String sistemaOperacional = System.getProperty("os.name");
         String user = sistemaOperacional.contains("nux") ? System.getProperty("user.name") : null;
