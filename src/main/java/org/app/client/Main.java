@@ -1,5 +1,6 @@
 package org.app.client;
 
+import java.util.List;
 import java.util.Scanner;
 
 import org.app.client.dao.controller.*;
@@ -14,63 +15,32 @@ import org.checkerframework.checker.units.qual.C;
 
 public class Main {
     public static void main(String[] args) {
-        Looca looca = new Looca();
-        Scanner scanner = new Scanner(System.in);
-        EmpresaController empresaController = new EmpresaController();
+        // Instanciando a classe ComputadorController
         ComputadorController computadorController = new ComputadorController();
-        ComponenteController componenteController = new ComponenteController();
-        CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
-        RegistroComponenteController registroComponenteController = new RegistroComponenteController();
+        // Listando os codigos existentes no banco de dados
+        List<String> codigosExistentes = computadorController.listarCodigosExistentes();
+        String codigoAcesso = "";
+        Scanner scanner = new Scanner(System.in);
 
-        empresaController.cadastrarEmpresa();
-        computadorController.ativarMaquina(1);
-        Computador computador = computadorController.buscarMaquina("00:1B:44:11:3A:B7");
-        componenteController.adicionarComponente("CPU", computador.getIdComputador());
-        Componente cpu = componenteController.pegarComponente(computador.getIdComputador());
-        caracteristicaComponenteController.adicionarCaracteristica("Fabricante", looca.getProcessador().getFabricante(), cpu.getIdComponente());
-        registroComponenteController.adicionarRegistro("Taxa Uso", String.valueOf(looca.getProcessador().getUso()), cpu.getIdComponente());
-
-        String sistemaOperacional = System.getProperty("os.name");
-        String user = sistemaOperacional.contains("nux") ? System.getProperty("user.name") : null;
-        
-        Login.autenticar(scanner);
-        System.out.println("Vamos passar informações do seu computador ->");
-        // String sistemaOperacional = looca.getSistema().getSistemaOperacional();
-        String processador = looca.getProcessador().getNome();
-        String memoriaRam = looca.getMemoria().getTotal().toString();
-
-        System.out.println("Sistema Operacional: " + sistemaOperacional);
-        System.out.println("Processador: " + processador);
-        System.out.println("Memória RAM: " + memoriaRam);
-
-        System.out.println("Vamos passar informações do seu computador <-");
-
-        System.out.println("Você quer ver mais detalhes sobre cada item? (S/N)");
-        String detalhes = scanner.nextLine();
-
-        while (detalhes != null && detalhes.equalsIgnoreCase("S")) {
-            System.out.println("Qual item você quer ver mais detalhes? (Sistema Operacional, Processador, Memória RAM)");
-            String item = scanner.nextLine();
-
-            if (item.equalsIgnoreCase("Sistema Operacional")) {
-                System.out.println("Sistema Operacional: " + looca.getSistema());
-            } else if (item.equalsIgnoreCase("Processador")) {
-                System.out.println("Processador: " + looca.getProcessador());
-            } else if (item.equalsIgnoreCase("Memoria RAM")) {
-                System.out.println("Memória RAM: " + looca.getMemoria());
-            } else {
-                System.out.println("Item não encontrado");
+        // Loop para validar o codigo de acesso
+        do {
+            System.out.println("Digite o código de acesso: ");
+            codigoAcesso = scanner.nextLine();
+            if (!codigosExistentes.contains(codigoAcesso)) {
+                System.out.println("Código de acesso inválido!");
+            }else{
+                System.out.println("Código de acesso válido!");
             }
+        } while (!codigosExistentes.contains(codigoAcesso));
 
-            System.out.println("Você quer ver mais detalhes sobre cada item? (S/N)");
-            detalhes = scanner.nextLine();
-            
-        }
-        System.out.println("Fim da execução");
-
-        System.out.println("Vamos agora verificar se há tarefas e drivers inválidos para serem removidos");
-        ExecutarPrograma.executarPrograma(sistemaOperacional, user);
-        scanner.close();
-
+        // Instanciando a classe Computador
+        Computador computador = computadorController.buscarMaquina(codigoAcesso);
+        // Instanciando a classe ComponenteController
+        ComponenteController componenteController = new ComponenteController();
+        // Instanciando a classe Looca
+        Looca looca = new Looca();
+        // Instanciando a classe ExecutarPrograma
+        ExecutarPrograma executarPrograma = new ExecutarPrograma();
+        
     }
 }
