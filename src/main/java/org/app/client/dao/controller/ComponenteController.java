@@ -4,20 +4,31 @@ import org.app.client.conexao.Conexao;
 import org.app.client.dao.entity.Componente;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import java.util.List;
+
 
 public class ComponenteController {
     Conexao conexao = new Conexao();
 
-    public void adicionarComponente(String nome, Integer fkComputador){
+    public Componente adicionarComponente(String nome, Integer fkComputador){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
 
         getConexao.update("Insert Into Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+
+        return pegarComponente(fkComputador);
     }
 
-    public Componente pegarComponente(Integer fkComputador){
+    private Componente pegarComponente(Integer fkComputador){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
 
         return getConexao.queryForObject("Select * FROM componente JOIN computador ON fkComputador = idComputador WHERE fkComputador = ? ORDER BY idComponente desc LIMIT 1", new BeanPropertyRowMapper<>(Componente.class), fkComputador);
     }
+
+    public List<Componente> listarComponentes(Integer idComputador){
+        JdbcTemplate getConexao = conexao.getJdbcTemplate();
+        List<Componente> componentes = getConexao.query("SELECT * FROM componente WHERE fkComputador = ?", new BeanPropertyRowMapper<>(Componente.class), idComputador);
+    
+        return componentes;
+      }
 
 }
