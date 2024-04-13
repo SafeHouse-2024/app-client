@@ -14,9 +14,10 @@ public class ComputadorController {
     System.out.println("Máquina ativada com sucesso!");
   }
 
-  public void buscarMaquina(String macAddress){
+  public Computador buscarMaquina(String macAddress){
     JdbcTemplate getConexao = conexao.getJdbcTemplate();
-    Computador alteracoes = getConexao.queryForObject("SELECT * FROM Computador WHERE macAddress = '%s'".formatted(macAddress), new BeanPropertyRowMapper<>(Computador.class));
-    System.out.println("Máquina encontrada com sucesso! \n" + alteracoes.toString());
+    Computador computadorEncontrado = getConexao.queryForObject("SELECT * FROM Computador WHERE macAddress = '%s'".formatted(macAddress), new BeanPropertyRowMapper<>(Computador.class));
+
+    return computadorEncontrado;
   }
 }
