@@ -20,6 +20,7 @@ public class Main {
         ComputadorController computadorController = new ComputadorController();
         empresaController.cadastrarEmpresa();
         computadorController.ativarMaquina(1);
+        computadorController.buscarMaquina("00:1B:44:11:3A:B7");
 
         String sistemaOperacional = System.getProperty("os.name");
         String user = sistemaOperacional.contains("nux") ? System.getProperty("user.name") : null;
