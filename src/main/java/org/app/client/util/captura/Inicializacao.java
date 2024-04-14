@@ -3,21 +3,22 @@ package org.app.client.util.captura;
 import com.github.britooo.looca.api.core.Looca;
 import com.github.britooo.looca.api.group.discos.Disco;
 import com.github.britooo.looca.api.group.rede.RedeInterface;
-import org.app.client.dao.controller.CaracteristicaComponenteController;
-import org.app.client.dao.controller.ComponenteController;
-import org.app.client.dao.controller.ComputadorController;
-import org.app.client.dao.controller.RegistroComponenteController;
+import com.github.britooo.looca.api.group.sistema.Sistema;
+import org.app.client.dao.controller.*;
 import org.app.client.dao.entity.CaracteristicaComponente;
 import org.app.client.dao.entity.Componente;
 import org.app.client.dao.entity.Computador;
+import org.app.client.dao.entity.UsoSistema;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Inicializacao {
 
-    public static Computador adicionarEstruturaMaquina(Looca looca, String codigoAcesso, String sistemaOperacional) {
+    public static Computador adicionarEstruturaMaquina(Looca looca, String codigoAcesso, Integer fkSistemaOperacional) {
 
         ComponenteController componenteController = new ComponenteController();
         ComputadorController computadorController = new ComputadorController();
@@ -25,7 +26,7 @@ public class Inicializacao {
 
         List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces().stream().filter(rede -> rede.getNomeExibicao().toUpperCase().contains("Wireless Network Adapter".toUpperCase())).collect(Collectors.toList());
         String macAddress = redes.get(0).getEnderecoMac();
-        Computador computador = null;
+        Computador computador = new Computador();
         try{
             computador = computadorController.buscarMaquina(macAddress);
         }catch (EmptyResultDataAccessException e){
@@ -73,7 +74,7 @@ public class Inicializacao {
             caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(0).getEnderecoIpv4().get(0), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(0).getEnderecoIpv6().get(0), rede.getIdComponente());
 
-            computadorController.inserirSistemaOperacional(sistemaOperacional, computador);
+            computadorController.inserirSistemaOperacional(fkSistemaOperacional, computador);
             computadorController.ativarMaquina(computador.getIdComputador());
             computador.setAtivo("Ativo");
         }
@@ -111,4 +112,29 @@ public class Inicializacao {
         }
     }
 
+    public static void registrarUso(UsoSistemaController usoSistemaController, Sistema sistema, Integer fkSistemaOperacional, Computador computador){
+        UsoSistema usoSistema = null;
+        try{
+            usoSistema = usoSistemaController.pegarUsoSistema(computador);
+        }catch (EmptyResultDataAccessException e){
+            System.out.println("Realizando a primeira medição de uso do sistema");
+        }
+        if(usoSistema == null){
+            usoSistemaController.adicionarUsoSistema(sistema.getInicializado(), sistema.getTempoDeAtividade(), fkSistemaOperacional, computador);
+            return;
+        }
+        if(!sistema.getInicializado().equals(ZonedDateTime.of(usoSistema.getDataInicializacao(), ZoneId.of("America/Sao_Paulo")).toInstant())){
+            System.out.println(sistema.getInicializado());
+            System.out.println(usoSistema.getDataInicializacao()+"Z");
+            usoSistemaController.adicionarUsoSistema(sistema.getInicializado(), sistema.getTempoDeAtividade(), fkSistemaOperacional, computador);
+            return;
+        }
+        usoSistemaController.atualizarUsoSistema(sistema.getTempoDeAtividade(), usoSistema);
+
+    }
+
+
+
+
 }
+

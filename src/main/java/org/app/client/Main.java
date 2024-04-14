@@ -15,17 +15,28 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
 
         String so = System.getProperty("os.name");
+
+        Integer fkSistemaOperacional = 0;
+        if(so.contains("win")){
+            fkSistemaOperacional = 1;
+        } else if (so.contains("nux")) {
+            fkSistemaOperacional = 2;
+        }
+
         Login login = new Login();
         String codigoAcesso = login.autenticar();
         Looca looca = new Looca();
-        Computador computador = Inicializacao.adicionarEstruturaMaquina(looca, codigoAcesso, so);
+
+        Computador computador = Inicializacao.adicionarEstruturaMaquina(looca, codigoAcesso, fkSistemaOperacional);
         RegistroComponenteController registroComponenteController = new RegistroComponenteController();
         ComponenteController componenteController = new ComponenteController();
-        List<Componente> componentes = componenteController.listarComponentes(computador.getIdComputador());
+        UsoSistemaController usoSistemaController = new UsoSistemaController();
 
+        List<Componente> componentes = componenteController.listarComponentes(computador.getIdComputador());
 
          while(true){
              Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);
+             Inicializacao.registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
              Thread.sleep(5000);
          }
 
