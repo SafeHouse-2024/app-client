@@ -24,4 +24,16 @@ public class ComputadorController {
     return computadorEncontrado;
   }
 
+  public void inserirSistemaOperacional(String sistemaOperacional, Computador computador){
+      JdbcTemplate getConexao = conexao.getJdbcTemplate();
+
+      Integer fkSistemaOperacional = 0;
+      if(sistemaOperacional.contains("win")){
+        fkSistemaOperacional = 1;
+      } else if (sistemaOperacional.contains("nux")) {
+        fkSistemaOperacional = 2;
+      }
+    getConexao.update("INSERT INTO SistemaComputador(fkSistemaOperacional, fkComputador) VALUES (?,?)", fkSistemaOperacional, computador.getIdComputador());
+  }
+
 }

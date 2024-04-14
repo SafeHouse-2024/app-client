@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class Inicializacao {
 
-    public static Computador adicionarEstruturaMaquina(Looca looca, String codigoAcesso) {
+    public static Computador adicionarEstruturaMaquina(Looca looca, String codigoAcesso, String sistemaOperacional) {
 
         ComponenteController componenteController = new ComponenteController();
         ComputadorController computadorController = new ComputadorController();
@@ -27,7 +27,7 @@ public class Inicializacao {
         String macAddress = redes.get(0).getEnderecoMac();
         Computador computador = null;
         try{
-            computador = computadorController.buscarMaquina("00:1B:44:11:3A:B8");
+            computador = computadorController.buscarMaquina(macAddress);
         }catch (EmptyResultDataAccessException e){
             System.out.println("Máquina não cadastrada!");
         }
@@ -73,15 +73,12 @@ public class Inicializacao {
             caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(0).getEnderecoIpv4().get(0), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(0).getEnderecoIpv6().get(0), rede.getIdComponente());
 
+            computadorController.inserirSistemaOperacional(sistemaOperacional, computador);
             computadorController.ativarMaquina(computador.getIdComputador());
             computador.setAtivo("Ativo");
         }
 
         return computador;
-    }
-
-    public static boolean verificarMaquina(Computador computador, String codigoAcesso) {
-        return computador.getCodigoAcesso().equals(codigoAcesso);
     }
 
     public static void capturarRegistros(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca) {
