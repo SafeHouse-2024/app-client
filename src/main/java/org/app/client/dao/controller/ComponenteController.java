@@ -13,7 +13,7 @@ public class ComponenteController {
     public Componente adicionarComponente(String nome, Integer fkComputador){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
 
-        getConexao.update("Insert Into Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+        getConexao.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
 
         return pegarComponente(fkComputador);
     }
@@ -21,12 +21,12 @@ public class ComponenteController {
     private Componente pegarComponente(Integer fkComputador){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
 
-        return getConexao.queryForObject("Select * FROM componente JOIN computador ON fkComputador = idComputador WHERE fkComputador = ? ORDER BY idComponente desc LIMIT 1", new BeanPropertyRowMapper<>(Componente.class), fkComputador);
+        return getConexao.queryForObject("Select * FROM Componente JOIN Computador ON fkComputador = idComputador WHERE fkComputador = ? ORDER BY idComponente desc LIMIT 1", new BeanPropertyRowMapper<>(Componente.class), fkComputador);
     }
 
-    public List<Componente> listarComponentes(Integer idComputador){
+    public List<Componente> listarComponentes(Integer fkComputador){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
-        List<Componente> componentes = getConexao.query("SELECT * FROM componente WHERE fkComputador = ?", new BeanPropertyRowMapper<>(Componente.class), idComputador);
+        List<Componente> componentes = getConexao.query("SELECT * FROM Componente WHERE fkComputador = ?", new BeanPropertyRowMapper<>(Componente.class), fkComputador);
     
         return componentes;
       }

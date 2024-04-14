@@ -12,7 +12,7 @@ public class CaracteristicaComponenteController {
     public void adicionarCaracteristica(String nome, String valor, Integer fkComponente){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
 
-        getConexao.update("Insert into CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
+        getConexao.update("INSERT INTO CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
     }
 
     public List<CaracteristicaComponente> listarCaracteristicas(Integer fkComponente){
@@ -20,5 +20,11 @@ public class CaracteristicaComponenteController {
         List<CaracteristicaComponente> caracteristicas = getConexao.query("SELECT * FROM CaracteristicaComponente WHERE fkComponente = ?", new BeanPropertyRowMapper<>(CaracteristicaComponente.class), fkComponente);
 
         return caracteristicas;
+    }
+
+    public void atualizarValorCaracteristica(String valor, Integer idCaracteristica){
+        JdbcTemplate getConexao = conexao.getJdbcTemplate();
+        getConexao.update("UPDATE CaracteristicaComponente SET valor = ? WHERE idCaracteristicaComponente = ?", valor, idCaracteristica);
+
     }
 }
