@@ -9,12 +9,14 @@ import org.app.client.dao.entity.Computador;
 import org.app.client.login.Login;
 
 import com.github.britooo.looca.api.core.Looca;
+import org.app.client.util.ExecutarPrograma;
 import org.app.client.util.captura.Inicializacao;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
         String so = System.getProperty("os.name");
+        String user = System.getProperty("user.name");
 
         Integer fkSistemaOperacional = 0;
         if(so.contains("win")){
@@ -35,6 +37,7 @@ public class Main {
         List<Componente> componentes = componenteController.listarComponentes(computador.getIdComputador());
 
          while(true){
+             ExecutarPrograma.executarPrograma(so, user);
              Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);
              Inicializacao.registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
              Thread.sleep(5000);

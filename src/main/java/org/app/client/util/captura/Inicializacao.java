@@ -2,6 +2,7 @@ package org.app.client.util.captura;
 
 import com.github.britooo.looca.api.core.Looca;
 import com.github.britooo.looca.api.group.discos.Disco;
+import com.github.britooo.looca.api.group.discos.Volume;
 import com.github.britooo.looca.api.group.rede.RedeInterface;
 import com.github.britooo.looca.api.group.sistema.Sistema;
 import org.app.client.dao.controller.*;
@@ -36,7 +37,7 @@ public class Inicializacao {
         if (computador.getAtivo().equals("Inativo") && codigoAcesso.equals(computador.getCodigoAcesso())) {
 
             List<Disco> discosLooca = looca.getGrupoDeDiscos().getDiscos();
-
+            List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
             // // Adicionando componentes
 
             // Processador
@@ -63,8 +64,10 @@ public class Inicializacao {
                     Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                     if (discos.getTamanho() >= Math.pow(10, 12)) {
                         caracteristicaComponenteController.adicionarCaracteristica("Memoria Total", String.valueOf("%.2f TB".formatted(discos.getTamanho() / Math.pow(10, 12))), disco.getIdComponente());
+                        caracteristicaComponenteController.adicionarCaracteristica("Memoria Disponível", String.valueOf(volumes.get(0).getDisponivel()),disco.getIdComponente());
                     } else {
                         caracteristicaComponenteController.adicionarCaracteristica("Memoria Total", String.valueOf("%.2f GB".formatted(discos.getTamanho() / Math.pow(10, 9))), disco.getIdComponente());
+                        caracteristicaComponenteController.adicionarCaracteristica("Memoria Disponível", String.valueOf(volumes.get(0).getDisponivel()),disco.getIdComponente());
                     }
 
                 }
@@ -124,8 +127,6 @@ public class Inicializacao {
             return;
         }
         if(!sistema.getInicializado().equals(ZonedDateTime.of(usoSistema.getDataInicializacao(), ZoneId.of("America/Sao_Paulo")).toInstant())){
-            System.out.println(sistema.getInicializado());
-            System.out.println(usoSistema.getDataInicializacao()+"Z");
             usoSistemaController.adicionarUsoSistema(sistema.getInicializado(), sistema.getTempoDeAtividade(), fkSistemaOperacional, computador);
             return;
         }
