@@ -1,6 +1,9 @@
 package org.app.client.util.driver;
 
 import com.profesorfalken.jpowershell.PowerShell;
+import org.app.client.dao.entity.Computador;
+import org.app.client.util.ExecutarPrograma;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,8 +36,10 @@ public class DriverManagerWindows {
     }
 
     // Remove os drivers inválidos
-    public static void removerDriversInvalidos(){
+    public static void removerDriversInvalidos(Computador computador){
+        JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
         driversInvalidos().forEach(drive -> PowerShell.executeSingleCommand("(New-Object -comObject Shell.Application).Namespace(17).ParseName(\"%s:\").InvokeVerb(\"Eject\")".formatted(drive)));
+        getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
     }
 
     // Retorna uma lista de drivers inválidos

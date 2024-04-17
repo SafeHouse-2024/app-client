@@ -14,6 +14,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class Inicializacao {
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
 
         List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces().stream().filter(rede -> rede.getNomeExibicao().toUpperCase().contains("Wireless Network Adapter".toUpperCase())).collect(Collectors.toList());
-        String macAddress = redes.get(0).getEnderecoMac();
+        String macAddress = redes.get(redes.size() - 1).getEnderecoMac();
         Computador computador = new Computador();
         try{
             computador = computadorController.buscarMaquina(macAddress);
@@ -36,7 +37,6 @@ public class Inicializacao {
 
         if (computador.getAtivo().equals("Inativo") && codigoAcesso.equals(computador.getCodigoAcesso())) {
 
-            List<Disco> discosLooca = looca.getGrupoDeDiscos().getDiscos();
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
             // // Adicionando componentes
 
@@ -57,22 +57,32 @@ public class Inicializacao {
             //Memoria RAM
             Componente memoria = componenteController.adicionarComponente("Memoria", computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("Memoria Total",
-                    String.valueOf("%.2fGB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9))), memoria.getIdComponente());
+                    String.valueOf("%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9))), memoria.getIdComponente());
+
             //Disco Rígido
-            for (Disco discos : discosLooca) {
-                if (discos.getTamanho() > 0) {
-                    Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
-                    if (discos.getTamanho() >= Math.pow(10, 12)) {
-                        caracteristicaComponenteController.adicionarCaracteristica("Memoria Total", String.valueOf("%.2f TB".formatted(discos.getTamanho() / Math.pow(10, 12))), disco.getIdComponente());
-                        caracteristicaComponenteController.adicionarCaracteristica("Memoria Disponível", String.valueOf(volumes.get(0).getDisponivel()),disco.getIdComponente());
-                    } else {
-                        caracteristicaComponenteController.adicionarCaracteristica("Memoria Total", String.valueOf("%.2f GB".formatted(discos.getTamanho() / Math.pow(10, 9))), disco.getIdComponente());
-                        caracteristicaComponenteController.adicionarCaracteristica("Memoria Disponível", String.valueOf(volumes.get(0).getDisponivel()),disco.getIdComponente());
+            Volume volumeArmazenado = volumes.get(0);
+            for (int i = 0; i < volumes.size(); i++) {
+                if(i == 0){
+                    if(volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9)){
+                        Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
+                        if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
+                            caracteristicaComponenteController.adicionarCaracteristica("Memoria Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memoria Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                        }
                     }
-
                 }
-
+                if(i > 0) {
+                    if (volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9) && !volumes.get(i).getUUID().equals(volumeArmazenado.getUUID())) {
+                        Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
+                        if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
+                            caracteristicaComponenteController.adicionarCaracteristica("Memoria Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memoria Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                        }
+                        volumeArmazenado = volumes.get(i);
+                    }
+                }
             }
+
             Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(0).getEnderecoIpv4().get(0), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(0).getEnderecoIpv6().get(0), rede.getIdComponente());
@@ -80,6 +90,11 @@ public class Inicializacao {
             computadorController.inserirSistemaOperacional(fkSistemaOperacional, computador);
             computadorController.ativarMaquina(computador.getIdComputador());
             computador.setAtivo("Ativo");
+        }
+
+        if(!computador.getCodigoAcesso().equals(codigoAcesso)){
+            System.out.println("Código de acesso inválido");
+            System.exit(0);
         }
 
         return computador;
@@ -97,20 +112,18 @@ public class Inicializacao {
     public static void pegarDisco(Componente componente, Looca looca) {
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
         List<CaracteristicaComponente> caracteristicaComponentes = caracteristicaComponenteController.listarCaracteristicas(componente.getIdComponente());
-        List<Disco> discos = looca.getGrupoDeDiscos().getDiscos();
+        List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
         for (int i = 0; i < caracteristicaComponentes.size(); i++) {
-            if (caracteristicaComponentes.get(i).getNome().equals("Memoria Total")) {
-                if (caracteristicaComponentes.get(i).getValor().equals(String.valueOf("%.2f TB".formatted(discos.get(i).getTamanho() / Math.pow(10, 12))))) {
-                    if (discos.get(i).getTamanho() > 0) {
-                        if (discos.get(i).getTamanho() >= Math.pow(10, 12)) {
-                            caracteristicaComponenteController.atualizarValorCaracteristica(String.valueOf("%.2f TB".formatted(discos.get(i).getTamanho() / Math.pow(10, 12))), caracteristicaComponentes.get(i).getIdCaracteristicaComponente());
-                        } else {
-                            caracteristicaComponenteController.atualizarValorCaracteristica(String.valueOf("%.2f GB".formatted(discos.get(i).getTamanho() / Math.pow(10, 9))), caracteristicaComponentes.get(i).getIdCaracteristicaComponente());
+            if(volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9))
+                if (caracteristicaComponentes.get(i).getNome().equals("Memoria Disponível")) {
+                    if (!caracteristicaComponentes.get(i).getValor().equals(String.valueOf("%.2f GB".formatted(volumes.get(i).getDisponivel() / Math.pow(10, 9))))) {
+                        if (volumes.get(i).getDisponivel() > 0) {
+                            if (volumes.get(i).getDisponivel() >= Math.pow(10, 9)) {
+                                caracteristicaComponenteController.atualizarValorCaracteristica(String.valueOf("%.2f GB".formatted(volumes.get(i).getDisponivel() / Math.pow(10, 9))), caracteristicaComponentes.get(i).getIdCaracteristicaComponente());
+                            }
                         }
                     }
                 }
-
-            }
 
         }
     }
