@@ -1,5 +1,7 @@
 package org.app.client.util.tasks;
 
+import com.profesorfalken.jpowershell.PowerShell;
+import com.profesorfalken.jpowershell.PowerShellResponse;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.Processo;
 import org.app.client.util.ExecutarPrograma;
@@ -30,16 +32,12 @@ public class TaskManager {
     private static void tasksKillWindows(Computador computador, List<Processo> listaProcessosProibidosWindows){
         JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
         listaProcessosProibidosWindows.forEach(processo -> {
-            try {
-                Process process = Runtime.getRuntime().exec(String.format(comandoWindows, processo.getNomeWindows()));
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String textoInvalido = reader.readLine();
-                process.waitFor();
-                if(textoInvalido != null && textoInvalido.equals("ERRO: o processo \"%s\" não foi encontrado.".formatted(processo.getNomeWindows()))) return;
+            PowerShellResponse response = PowerShell.executeSingleCommand(comandoWindows.formatted(processo.getNomeWindows()));
+
+            if(response.getCommandOutput().contains("ÊXITO:")){
                 getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNomeWindows()), computador.getIdComputador());
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
             }
+
         });
     }
 
