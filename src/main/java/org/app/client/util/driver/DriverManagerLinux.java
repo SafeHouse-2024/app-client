@@ -23,7 +23,7 @@ public class DriverManagerLinux {
                 Process p = Runtime.getRuntime().exec("sudo -S eject /media/%s/%s".formatted(user, pendrive));
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
                 //Passar a senha do sudo
-                bw.write("159634801480");
+                bw.write("");
                 bw.flush();
                 bw.close();
                 getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());

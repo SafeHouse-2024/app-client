@@ -26,7 +26,7 @@ public class Inicializacao {
         ComputadorController computadorController = new ComputadorController();
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
 
-        List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces().stream().filter(rede -> rede.getNomeExibicao().toUpperCase().contains("Wireless Network Adapter".toUpperCase())).collect(Collectors.toList());
+        List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces();
         String macAddress = redes.get(redes.size() - 1).getEnderecoMac();
         Computador computador = new Computador();
         try{
@@ -84,8 +84,8 @@ public class Inicializacao {
             }
 
             Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
-            caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(0).getEnderecoIpv4().get(0), rede.getIdComponente());
-            caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(0).getEnderecoIpv6().get(0), rede.getIdComponente());
+            caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
+            caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
 
             computadorController.inserirSistemaOperacional(fkSistemaOperacional, computador);
             computadorController.ativarMaquina(computador.getIdComputador());
@@ -104,7 +104,7 @@ public class Inicializacao {
         Componente processador = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Processador")).findFirst().get();
         Componente memoria = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Memoria")).findFirst().get();
         List<Componente> discos = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Disco")).toList();
-        discos.forEach(disco -> pegarDisco(disco, looca));
+//        discos.forEach(disco -> pegarDisco(disco, looca));
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getProcessador().getUso())), processador.getIdComponente());
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9))), memoria.getIdComponente());
     }

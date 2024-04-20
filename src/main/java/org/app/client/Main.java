@@ -27,14 +27,14 @@ public class Main {
         String user = System.getProperty("user.name");
 
         Integer fkSistemaOperacional = 0;
-        if(so.contains("win")){
+        if(so.toUpperCase().contains("win".toUpperCase())){
             fkSistemaOperacional = 1;
         } else if (so.contains("nux")) {
             fkSistemaOperacional = 2;
         }
+
         ProcessoController processoController = new ProcessoController();
         List<Processo> processos = processoController.listarProcessos(fkSistemaOperacional);
-        System.out.println(processos);
         Login login = new Login();
         String codigoAcesso = login.autenticar();
         Looca looca = new Looca();
