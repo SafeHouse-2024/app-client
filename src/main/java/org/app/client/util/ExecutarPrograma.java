@@ -17,7 +17,7 @@ public class ExecutarPrograma {
     public static void executarPrograma(String so, String user, Computador computador, List<Processo> processos){
 
         TaskManager.taskKill(so, computador, processos);
-        if(so.contains("win")){
+        if(so.toUpperCase().contains("win".toUpperCase())){
             DriverManagerWindows.removerDriversInvalidos(computador);
         }else if(so.contains("nux")){
             DriverManagerLinux.removerDriversInvalidos(user, computador);

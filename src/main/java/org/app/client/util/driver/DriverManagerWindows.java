@@ -1,6 +1,7 @@
 package org.app.client.util.driver;
 
 import com.profesorfalken.jpowershell.PowerShell;
+import com.profesorfalken.jpowershell.PowerShellResponse;
 import org.app.client.dao.entity.Computador;
 import org.app.client.util.ExecutarPrograma;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,8 +39,16 @@ public class DriverManagerWindows {
     // Remove os drivers inválidos
     public static void removerDriversInvalidos(Computador computador){
         JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
-        driversInvalidos().forEach(drive -> PowerShell.executeSingleCommand("(New-Object -comObject Shell.Application).Namespace(17).ParseName(\"%s:\").InvokeVerb(\"Eject\")".formatted(drive)));
-        getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+        driversInvalidos().forEach(drive -> {
+            PowerShellResponse response = comandoPowerShell(drive);
+            if(response.getCommandOutput().isEmpty()){
+                getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+            }
+        });
+    }
+
+    private static PowerShellResponse comandoPowerShell(String driver){
+        return PowerShell.executeSingleCommand("(New-Object -comObject Shell.Application).Namespace(17).ParseName(\"D:\").InvokeVerb(\"Eject\")".formatted(driver));
     }
 
     // Retorna uma lista de drivers inválidos
