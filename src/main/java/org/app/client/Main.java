@@ -36,7 +36,9 @@ public class Main {
         ProcessoController processoController = new ProcessoController();
         List<Processo> processos = processoController.listarProcessos(fkSistemaOperacional);
         Login login = new Login();
-        String codigoAcesso = login.autenticar();
+        String[] result = login.autenticar(fkSistemaOperacional).split("#");
+        String codigoAcesso = result[0];
+        String sudo = result[1];
         Looca looca = new Looca();
         Computador computador = Inicializacao.adicionarEstruturaMaquina(looca, codigoAcesso, fkSistemaOperacional);
         RegistroComponenteController registroComponenteController = new RegistroComponenteController();
@@ -46,7 +48,7 @@ public class Main {
         List<Componente> componentes = componenteController.listarComponentes(computador.getIdComputador());
 
          while(true){
-             ExecutarPrograma.executarPrograma(so, user, computador, processos);
+             ExecutarPrograma.executarPrograma(so, user, computador, processos, sudo);
              Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);
              Inicializacao.registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
              Thread.sleep(5000);

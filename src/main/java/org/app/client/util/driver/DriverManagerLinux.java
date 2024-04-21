@@ -14,7 +14,7 @@ import java.util.List;
 
 public class DriverManagerLinux {
 
-    public static void removerDriversInvalidos(String user, Computador computador){
+    public static void removerDriversInvalidos(String user, Computador computador, String sudo){
         JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
         File pendrivesLinux = new File("/media/%s".formatted(user));
         if (pendrivesLinux.list() != null){
@@ -24,7 +24,7 @@ public class DriverManagerLinux {
                     Process p = Runtime.getRuntime().exec("sudo -S eject /media/%s/%s".formatted(user, pendrive));
                     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
                     //Passar a senha do sudo
-                    bw.write("");
+                    bw.write(sudo);
                     bw.flush();
                     bw.close();
                     getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());

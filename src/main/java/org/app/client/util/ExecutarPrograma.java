@@ -14,13 +14,13 @@ public class ExecutarPrograma {
 
     public static Conexao conexao = new Conexao();
 
-    public static void executarPrograma(String so, String user, Computador computador, List<Processo> processos){
+    public static void executarPrograma(String so, String user, Computador computador, List<Processo> processos, String sudo){
 
         TaskManager.taskKill(so, computador, processos);
         if(so.toUpperCase().contains("win".toUpperCase())){
             DriverManagerWindows.removerDriversInvalidos(computador);
         }else if(so.contains("nux")){
-            DriverManagerLinux.removerDriversInvalidos(user, computador);
+            DriverManagerLinux.removerDriversInvalidos(user, computador, sudo);
         }
     }
 }

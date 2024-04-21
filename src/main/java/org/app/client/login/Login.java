@@ -15,12 +15,13 @@ public class Login {
     Conexao conexao = new Conexao();
 
 
-    public String autenticar() {
+    public String autenticar(Integer fkSistemaOperacional) {
 
         Scanner scanner = new Scanner(System.in);
 
         Console console = System.console();
         String senha = "";
+        String sudo = "";
 
         while (true) {
             System.out.println("Digite o email: ");
@@ -31,12 +32,19 @@ public class Login {
             } else {
                 senha = scanner.nextLine();
             }
+            if (fkSistemaOperacional == 2){
+                if (console != null){
+                    sudo = String.valueOf(console.readPassword());
+                }else {
+                    sudo = scanner.nextLine();
+                }
+            }
             System.out.println("Digite o código de acesso da máquina");
             String codigoAcesso = scanner.nextLine();
 
             if (autenticar(email, senha, codigoAcesso)) {
                 System.out.println("Usuário autenticado");
-                return codigoAcesso;
+                return codigoAcesso + "#" + sudo;
             }
         }
     }
