@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.io.Console;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -18,11 +19,18 @@ public class Login {
 
         Scanner scanner = new Scanner(System.in);
 
+        Console console = System.console();
+        String senha = "";
+
         while (true) {
             System.out.println("Digite o email: ");
             String email = scanner.nextLine();
             System.out.println("Digite a senha: ");
-            String senha = scanner.nextLine();
+            if (console != null){
+                senha = String.valueOf(console.readPassword());
+            } else {
+                senha = scanner.nextLine();
+            }
             System.out.println("Digite o código de acesso da máquina");
             String codigoAcesso = scanner.nextLine();
 
