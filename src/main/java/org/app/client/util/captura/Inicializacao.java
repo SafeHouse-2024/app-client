@@ -28,6 +28,7 @@ public class Inicializacao {
 
         List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces();
         String macAddress = redes.get(redes.size() - 1).getEnderecoMac();
+        System.out.println("O macAddress da máquina é " + macAddress);
         Computador computador = new Computador();
         try{
             computador = computadorController.buscarMaquina(macAddress);
@@ -45,19 +46,25 @@ public class Inicializacao {
                     computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("Fabricante",
                     looca.getProcessador().getFabricante(), processador.getIdComponente());
+                System.out.println("O fabricante do seu processador é " + looca.getProcessador().getFabricante());
             caracteristicaComponenteController.adicionarCaracteristica("Nome", looca.getProcessador().getNome(),
                     processador.getIdComponente());
-            caracteristicaComponenteController.adicionarCaracteristica("Frequencia",
+                System.out.println("O nome do seu processador é " + looca.getProcessador().getNome());
+            caracteristicaComponenteController.adicionarCaracteristica("Frequência",
                     looca.getProcessador().getFrequencia().toString(), processador.getIdComponente());
-            caracteristicaComponenteController.adicionarCaracteristica("Nucleos Físicos",
+                System.out.println("A sua frequência é " + looca.getProcessador().getFrequencia());
+            caracteristicaComponenteController.adicionarCaracteristica("Núcleos Físicos",
                     looca.getProcessador().getNumeroCpusFisicas().toString(), processador.getIdComponente());
+                System.out.println("A quantidade de núcleos físicos são: " + looca.getProcessador().getNumeroCpusFisicas());
             caracteristicaComponenteController.adicionarCaracteristica("Núcleos Lógicos",
                     looca.getProcessador().getNumeroCpusLogicas().toString(), processador.getIdComponente());
+                System.out.println("A quantidade de núcleos lógicos são: " + looca.getProcessador().getNumeroCpusLogicas());
 
             //Memoria RAM
-            Componente memoria = componenteController.adicionarComponente("Memoria", computador.getIdComputador());
-            caracteristicaComponenteController.adicionarCaracteristica("Memoria Total",
+            Componente memoria = componenteController.adicionarComponente("Memória", computador.getIdComputador());
+            caracteristicaComponenteController.adicionarCaracteristica("Memória Total",
                     String.valueOf("%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9))), memoria.getIdComponente());
+            System.out.println("Sua máquina tem %.2fGB de memória RAM.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
 
             //Disco Rígido
             Volume volumeArmazenado = volumes.get(0);
@@ -66,8 +73,9 @@ public class Inicializacao {
                     if(volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9)){
                         Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                         if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
-                            caracteristicaComponenteController.adicionarCaracteristica("Memoria Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
-                            caracteristicaComponenteController.adicionarCaracteristica("Memoria Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                            System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
                         }
                     }
                 }
@@ -75,8 +83,9 @@ public class Inicializacao {
                     if (volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9) && !volumes.get(i).getUUID().equals(volumeArmazenado.getUUID())) {
                         Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                         if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
-                            caracteristicaComponenteController.adicionarCaracteristica("Memoria Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
-                            caracteristicaComponenteController.adicionarCaracteristica("Memoria Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                            System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
                         }
                         volumeArmazenado = volumes.get(i);
                     }
@@ -86,6 +95,9 @@ public class Inicializacao {
             Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
+            System.out.println("O endereço IPV4 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv4().get(0));
+            System.out.println("O endereço IPV6 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv6().get(0));
+            System.out.println("O sistema operacional da máquina é " + looca.getSistema().getSistemaOperacional());
 
             computadorController.inserirSistemaOperacional(fkSistemaOperacional, computador);
             computadorController.ativarMaquina(computador.getIdComputador());
@@ -102,7 +114,7 @@ public class Inicializacao {
 
     public static void capturarRegistros(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca) {
         Componente processador = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Processador")).findFirst().get();
-        Componente memoria = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Memoria")).findFirst().get();
+        Componente memoria = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Memória")).findFirst().get();
         List<Componente> discos = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Disco")).toList();
 //        discos.forEach(disco -> pegarDisco(disco, looca));
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getProcessador().getUso())), processador.getIdComponente());
@@ -115,7 +127,7 @@ public class Inicializacao {
         List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
         for (int i = 0; i < caracteristicaComponentes.size(); i++) {
             if(volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9))
-                if (caracteristicaComponentes.get(i).getNome().equals("Memoria Disponível")) {
+                if (caracteristicaComponentes.get(i).getNome().equals("Memória Disponível")) {
                     if (!caracteristicaComponentes.get(i).getValor().equals(String.valueOf("%.2f GB".formatted(volumes.get(i).getDisponivel() / Math.pow(10, 9))))) {
                         if (volumes.get(i).getDisponivel() > 0) {
                             if (volumes.get(i).getDisponivel() >= Math.pow(10, 9)) {
