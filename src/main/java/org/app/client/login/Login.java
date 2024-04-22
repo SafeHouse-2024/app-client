@@ -33,6 +33,7 @@ public class Login {
                 senha = scanner.nextLine();
             }
             if (fkSistemaOperacional == 2){
+                System.out.println("Digite a senha do sudo: ");
                 if (console != null){
                     sudo = String.valueOf(console.readPassword());
                 }else {
