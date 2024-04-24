@@ -21,7 +21,7 @@ public class Login {
 
         Console console = System.console();
         String senha = "";
-        String sudo = "";
+        String sudo = " ";
 
         while (true) {
             System.out.println("Digite o email: ");

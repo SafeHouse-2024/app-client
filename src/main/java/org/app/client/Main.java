@@ -23,6 +23,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
+        Looca teste = new Looca();
+        System.out.println(teste.getRede().getGrupoDeInterfaces().getInterfaces().get(0).getEnderecoMac());
+
         String so = System.getProperty("os.name");
         String user = System.getProperty("user.name");
 
