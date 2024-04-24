@@ -119,6 +119,8 @@ public class Inicializacao {
 //        discos.forEach(disco -> pegarDisco(disco, looca));
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getProcessador().getUso())), processador.getIdComponente());
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9))), memoria.getIdComponente());
+
+        System.out.println("A taxa de uso do processador é: " + looca.getProcessador().getUso());
     }
 
     public static void pegarDisco(Componente componente, Looca looca) {
@@ -138,6 +140,7 @@ public class Inicializacao {
                 }
 
         }
+        System.out.println("A memória disponível do disco é: " + volumes.get(0).getDisponivel());
     }
 
     public static void registrarUso(UsoSistemaController usoSistemaController, Sistema sistema, Integer fkSistemaOperacional, Computador computador){
@@ -156,6 +159,8 @@ public class Inicializacao {
             return;
         }
         usoSistemaController.atualizarUsoSistema(sistema.getTempoDeAtividade(), usoSistema);
+
+        System.out.println("O tempo de atividade do sistema é: " + sistema.getTempoDeAtividade());
 
     }
 
