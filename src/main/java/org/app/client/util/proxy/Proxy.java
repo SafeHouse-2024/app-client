@@ -16,9 +16,11 @@ public class Proxy {
   private static void comandos(String so) {
     if (so.toUpperCase().contains("win".toUpperCase())) {
       PowerShell.executeSingleCommand("netsh winhttp set proxy %s:%s".formatted(endereco, porta));
+      System.out.println("Proxy executado com sucesso!");
     } else if (so.contains("nux")) {
       try {
         Runtime.getRuntime().exec("export http_proxy=http://%s:%s".formatted(endereco, porta));
+        System.out.println();
       } catch (IOException e) {
         e.printStackTrace();
       }

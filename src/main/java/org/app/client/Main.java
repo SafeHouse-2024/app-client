@@ -44,14 +44,14 @@ public class Main {
         String sudo = result[1];
 
         System.out.println("""
-                Deseja conectar ao proxy?
+                Deseja conectar sua maquina com nosso servidor proxy?
                 S - Sim
                 N - Não""");
         Scanner scanner = new Scanner(System.in);
         String resposta = scanner.nextLine();
         Proxy.conectarProxy(resposta, so);
         scanner.close();
-        
+
         Looca looca = new Looca();
         Computador computador = Inicializacao.adicionarEstruturaMaquina(looca, codigoAcesso, fkSistemaOperacional);
         RegistroComponenteController registroComponenteController = new RegistroComponenteController();

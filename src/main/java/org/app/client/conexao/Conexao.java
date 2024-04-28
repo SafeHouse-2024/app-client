@@ -10,7 +10,7 @@ public class Conexao {
     BasicDataSource dataSource = new BasicDataSource();
 
     dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-    dataSource.setUrl("jdbc:mysql://44.208.29.157:3306/spectra");
+    dataSource.setUrl("jdbc:mysql://44.202.81.238:3306/spectra");
     dataSource.setUsername("admin");
     dataSource.setPassword("Sptech#2024");
 
