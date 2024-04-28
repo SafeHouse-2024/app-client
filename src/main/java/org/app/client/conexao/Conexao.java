@@ -10,9 +10,9 @@ public class Conexao {
     BasicDataSource dataSource = new BasicDataSource();
 
     dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-    dataSource.setUrl("jdbc:mysql://localhost:3306/spectra");
-    dataSource.setUsername("aluno");
-    dataSource.setPassword("sptech");
+    dataSource.setUrl("jdbc:mysql://44.208.29.157:3306/spectra");
+    dataSource.setUsername("admin");
+    dataSource.setPassword("Sptech#2024");
 
     jdbcTemplate = new JdbcTemplate(dataSource);
   }

@@ -16,14 +16,15 @@ import org.app.client.login.Login;
 import com.github.britooo.looca.api.core.Looca;
 import org.app.client.util.ExecutarPrograma;
 import org.app.client.util.captura.Inicializacao;
+import org.app.client.util.proxy.Proxy;
+import org.checkerframework.checker.units.qual.s;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-
-        Looca teste = new Looca();
 
         String so = System.getProperty("os.name");
         String user = System.getProperty("user.name");
@@ -41,6 +42,16 @@ public class Main {
         String[] result = login.autenticar(fkSistemaOperacional).split("#");
         String codigoAcesso = result[0];
         String sudo = result[1];
+
+        System.out.println("""
+                Deseja conectar ao proxy?
+                S - Sim
+                N - Não""");
+        Scanner scanner = new Scanner(System.in);
+        String resposta = scanner.nextLine();
+        Proxy.conectarProxy(resposta, so);
+        scanner.close();
+        
         Looca looca = new Looca();
         Computador computador = Inicializacao.adicionarEstruturaMaquina(looca, codigoAcesso, fkSistemaOperacional);
         RegistroComponenteController registroComponenteController = new RegistroComponenteController();

@@ -4,6 +4,7 @@ import org.app.client.conexao.Conexao;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.app.client.util.proxy.Proxy;
 
 import java.io.Console;
 import java.util.HashMap;
@@ -63,7 +64,6 @@ public class Login {
 
         return usuario != null;
     }
-
 }
 
 
