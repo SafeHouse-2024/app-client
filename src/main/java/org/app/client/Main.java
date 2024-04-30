@@ -1,24 +1,17 @@
 package org.app.client;
 
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-import com.github.britooo.looca.api.group.discos.Volume;
 import org.app.client.dao.controller.*;
 import org.app.client.dao.entity.Componente;
 import org.app.client.dao.entity.Computador;
-import org.app.client.dao.entity.Processo;
-import org.app.client.dao.entity.UsoSistema;
+import org.app.client.dao.entity.NomeProcesso;
 import org.app.client.login.Login;
 
 import com.github.britooo.looca.api.core.Looca;
 import org.app.client.util.ExecutarPrograma;
 import org.app.client.util.captura.Inicializacao;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -35,8 +28,8 @@ public class Main {
             fkSistemaOperacional = 2;
         }
 
-        ProcessoController processoController = new ProcessoController();
-        List<Processo> processos = processoController.listarProcessos(fkSistemaOperacional);
+        NomeProcessoController nomeProcessoController = new NomeProcessoController();
+        List<NomeProcesso> processos = nomeProcessoController.listarProcessos(fkSistemaOperacional);
         Login login = new Login();
         String[] result = login.autenticar(fkSistemaOperacional).split("#");
         String codigoAcesso = result[0];

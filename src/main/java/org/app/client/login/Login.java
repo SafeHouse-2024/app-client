@@ -55,8 +55,7 @@ public class Login {
 
         String usuario = null;
         try{
-            usuario = getConexao.queryForObject("SELECT f.email FROM Funcionario f JOIN Computador c ON c.fkFuncionario = f.idFuncionario " +
-                    "WHERE f.email = ? AND f.senha = ? AND c.codigoAcesso = ?", new BeanPropertyRowMapper<>(String.class), email, senha, codigoAcesso);
+            usuario = getConexao.queryForObject("SELECT u.email FROM Usuario u JOIN Computador c ON c.fkUsuario = u.idUsuario WHERE u.email = ? AND u.senha = ? AND c.codigoAcesso = ? AND u.tipo = ?", new BeanPropertyRowMapper<>(String.class), email, senha, codigoAcesso, "Máquina");
         }catch (EmptyResultDataAccessException e){
             System.out.println("Não foi possível se autenticar, preencha os campos corretamente");
         }
