@@ -13,6 +13,7 @@ import java.util.Scanner;
 public class Login {
 
     Conexao conexao = new Conexao();
+    private static final int MAX_TENTATIVAS = 3;
 
 
     public String autenticar(Integer fkSistemaOperacional) {
@@ -22,8 +23,9 @@ public class Login {
         Console console = System.console();
         String senha = "";
         String sudo = " ";
+        int tentativas = 0;
 
-        while (true) {
+        while (tentativas < MAX_TENTATIVAS) {
             System.out.println("Digite o email: ");
             String email = scanner.nextLine();
             System.out.println("Digite a senha: ");
@@ -46,8 +48,14 @@ public class Login {
             if (autenticar(email, senha, codigoAcesso)) {
                 System.out.println("Usuário autenticado");
                 return codigoAcesso + "#" + sudo;
+            } else {
+                tentativas++;
+                System.out.println("Senha incorreta. Tentativas restantes: " + (MAX_TENTATIVAS - tentativas));
             }
         }
+
+        System.out.println("Limite de tentativas excedido. O login está bloqueado.");
+        return null;
     }
 
     private boolean autenticar(String email, String senha, String codigoAcesso) {
