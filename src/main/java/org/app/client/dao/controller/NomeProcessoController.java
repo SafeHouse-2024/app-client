@@ -14,10 +14,8 @@ public class NomeProcessoController {
     public List<NomeProcesso> listarProcessos(Integer fkSistemaOperacional){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
         if(fkSistemaOperacional == 1){
-            return getConexao.query("SELECT np.nome FROM ProcessoSistema ps JOIN Processo p ON p.idProcesso = ps.fkProcesso JOIN NomeProcesso np " +
-                    "ON np.idNome = p.fkNomeProcesso WHERE ps.fkSistemaOperacional = ?", new BeanPropertyRowMapper<>(NomeProcesso.class), fkSistemaOperacional);
+            return getConexao.query("SELECT np.nome FROM ProcessoSistema ps JOIN NomeProcesso np ON np.idNome = ps.fkNomeProcesso WHERE ps.fkSistemaOperacional = ?", new BeanPropertyRowMapper<>(NomeProcesso.class), fkSistemaOperacional);
         }
-        return getConexao.query("SELECT np.nome FROM ProcessoSistema ps JOIN Processo p ON p.idProcesso = ps.fkProcesso JOIN NomeProcesso np " +
-                "ON np.idNome = p.fkNomeProcesso WHERE ps.fkSistemaOperacional = ?", new BeanPropertyRowMapper<>(NomeProcesso.class), fkSistemaOperacional);
+        return getConexao.query("SELECT np.nome FROM ProcessoSistema ps JOIN NomeProcesso np ON np.idNome = ps.fkNomeProcesso WHERE ps.fkSistemaOperacional = ?", new BeanPropertyRowMapper<>(NomeProcesso.class), fkSistemaOperacional);
     }
 }
