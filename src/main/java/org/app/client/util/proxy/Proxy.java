@@ -4,7 +4,7 @@ import com.profesorfalken.jpowershell.PowerShell;
 import java.io.IOException;
 
 public class Proxy {
-  private static String endereco = "18.234.191.199";
+  private static String endereco = "3.82.115.226";
   private static String porta = "3128";
 
   public static void conectarProxy(String resposta, String so){
