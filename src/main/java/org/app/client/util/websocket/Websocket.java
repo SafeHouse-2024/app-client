@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class Websocket {
 
-    public static void initializeWebsocketClient() throws URISyntaxException {
+    public static Socket initializeWebsocketClient() throws URISyntaxException {
         Map<String, List<String>> nome = new HashMap<>();
         String nomeEmpresa = "Rappi";
         nome.put("token", List.of("123"));
@@ -23,12 +23,6 @@ public class Websocket {
 //        Thread.sleep(3000);
 //        socket.close();
         socket.on(Socket.EVENT_DISCONNECT, objects -> System.out.println("Desconectado"));
-        socket.emit("send_message_%s".formatted(nomeEmpresa), "A aplicação whatsappweb foi aberta");
-        socket.on("receive_message_%s".formatted(nomeEmpresa), new Emitter.Listener() {
-            @Override
-            public void call(Object... objects) {
-                System.out.println("Dado Recebido");
-            }
-        });
+        return socket;
     }
 }
