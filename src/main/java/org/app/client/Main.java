@@ -60,10 +60,7 @@ public class Main {
         iniciarMedicao.start();
         executarInovacao.start();
 
-
-
-        socket.emit("send_message_%s".formatted("Rappi"), "A aplicação whatsappweb foi aberta");
-        socket.on("receive_message_%s_%s".formatted("Rappi", looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size() - 1).getEnderecoMac()), new Emitter.Listener() {
+        socket.on("receive_message_%s".formatted(looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size() - 1).getEnderecoMac()), new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
                     Integer contador = executarPrograma.getContador();

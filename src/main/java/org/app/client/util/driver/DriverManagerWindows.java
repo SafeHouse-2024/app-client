@@ -4,9 +4,11 @@ import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellResponse;
 import org.app.client.dao.entity.Computador;
 import org.app.client.util.ExecutarPrograma;
+import org.app.client.util.websocket.Websocket;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +45,11 @@ public class DriverManagerWindows {
             PowerShellResponse response = comandoPowerShell(drive);
             if(response.getCommandOutput().isEmpty()){
                 getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+                try {
+                    Websocket.defineEventMessage("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

@@ -5,10 +5,12 @@ import com.profesorfalken.jpowershell.PowerShellResponse;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.NomeProcesso;
 import org.app.client.util.ExecutarPrograma;
+import org.app.client.util.websocket.Websocket;
 import org.buildobjects.process.ExternalProcessFailureException;
 import org.buildobjects.process.ProcBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class TaskManager {
@@ -32,6 +34,11 @@ public class TaskManager {
 
             if(response.getCommandOutput().contains("ÊXITO:")){
                 getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+                try {
+                    Websocket.defineEventMessage("O processo %s foi fechado da %s".formatted(processo.getNome(), computador.getNome()));
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
         });
@@ -49,7 +56,11 @@ public class TaskManager {
             }
             if(textoInvalido.contains("%s: no process found".formatted(processo.getNome()))) return;
             getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
-
+            try {
+                Websocket.defineEventMessage("O processo %s foi fechado da %s".formatted(processo.getNome(), computador.getNome()));
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
         });
 
     }

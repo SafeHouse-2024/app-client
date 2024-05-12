@@ -2,7 +2,6 @@ package org.app.client.util.websocket;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -19,10 +18,11 @@ public class Websocket {
         IO.Options options = IO.Options.builder().setExtraHeaders(nome).build();
         Socket socket = IO.socket("http://127.0.0.1:3001", options).connect();
         socket.on(Socket.EVENT_CONNECT, objects -> System.out.println("Conectado"));
-//        System.out.println(socket.connected());
-//        Thread.sleep(3000);
-//        socket.close();
         socket.on(Socket.EVENT_DISCONNECT, objects -> System.out.println("Desconectado"));
         return socket;
+    }
+
+    public static void defineEventMessage(String message) throws URISyntaxException {
+        initializeWebsocketClient().emit("send_message_%s".formatted("Rappi"), message);
     }
 }
