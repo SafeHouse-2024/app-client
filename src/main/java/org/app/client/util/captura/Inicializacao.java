@@ -10,6 +10,7 @@ import org.app.client.dao.entity.CaracteristicaComponente;
 import org.app.client.dao.entity.Componente;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.UsoSistema;
+import org.app.client.util.Ping;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.ZoneId;
@@ -25,6 +26,7 @@ public class Inicializacao {
         ComponenteController componenteController = new ComponenteController();
         ComputadorController computadorController = new ComputadorController();
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
+        Ping ping = new Ping();
 
         List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces();
         String macAddress = redes.get(redes.size() - 1).getEnderecoMac();
@@ -40,6 +42,12 @@ public class Inicializacao {
 
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
             // // Adicionando componentes
+            //Rede
+
+
+            Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
+
+            caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.pingar(););
 
             // Processador
             Componente processador = componenteController.adicionarComponente("Processador",
