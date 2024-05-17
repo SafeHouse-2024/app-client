@@ -27,6 +27,7 @@ public class Inicializacao {
         ComputadorController computadorController = new ComputadorController();
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
         Ping ping = new Ping();
+        String so = System.getProperty("os.name");
 
         List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces();
         String macAddress = redes.get(redes.size() - 1).getEnderecoMac();
@@ -46,8 +47,9 @@ public class Inicializacao {
 
 
             Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
-
-            caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.pingar(););
+            caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.pingar(so, 1), rede.getIdComponente());
+            caracteristicaComponenteController.adicionarCaracteristica("Dowload", ping.pingar(so, 2), rede.getIdComponente());
+            caracteristicaComponenteController.adicionarCaracteristica("Upload", ping.pingar(so, 3), rede.getIdComponente());
 
             // Processador
             Componente processador = componenteController.adicionarComponente("Processador",
@@ -100,7 +102,7 @@ public class Inicializacao {
                 }
             }
 
-            Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
+            rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
             System.out.println("O endereço IPV4 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv4().get(0));

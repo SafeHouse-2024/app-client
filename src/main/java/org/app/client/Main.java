@@ -22,8 +22,9 @@ public class Main {
         Looca teste = new Looca();
 
         String so = System.getProperty("os.name");
+        Integer opcao = 1;
         String user = System.getProperty("user.name");
-        ping.pingar(so);
+        ping.pingar(so, opcao);
 //        ping.pingar(so);
 
         Integer fkSistemaOperacional = 0;
