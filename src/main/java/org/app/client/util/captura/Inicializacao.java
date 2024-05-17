@@ -39,7 +39,11 @@ public class Inicializacao {
             System.out.println("Máquina não cadastrada!");
         }
 
-        if (computador.getAtivo().equals("Inativo") && codigoAcesso.equals(computador.getCodigoAcesso())) {
+        if (computador.getAtivo() != null && computador.getAtivo().equals("Inativo") &&
+                codigoAcesso != null && codigoAcesso.equals(computador.getCodigoAcesso())) {
+            // Sua lógica aqui
+        }
+        {
 
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
             // // Adicionando componentes
@@ -47,9 +51,9 @@ public class Inicializacao {
 
 
             Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
-            caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.pingar(so, 1), rede.getIdComponente());
-            caracteristicaComponenteController.adicionarCaracteristica("Dowload", ping.pingar(so, 2), rede.getIdComponente());
-            caracteristicaComponenteController.adicionarCaracteristica("Upload", ping.pingar(so, 3), rede.getIdComponente());
+            caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.getPing(), rede.getIdComponente());
+            caracteristicaComponenteController.adicionarCaracteristica("Dowload", ping.getDownload(), rede.getIdComponente());
+            caracteristicaComponenteController.adicionarCaracteristica("Upload", ping.getUpload(), rede.getIdComponente());
 
             // Processador
             Componente processador = componenteController.adicionarComponente("Processador",
