@@ -4,7 +4,7 @@ import java.net.URL;
 import java.io.OutputStream;
 
 public class NotificacaoSlack {
-    private static final String WEBHOOK_URL = "https://hooks.slack.com/services/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";
+    private static final String WEBHOOK_URL = "https://hooks.slack.com/services/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";
     public static void main(String[] args) {
         try {
             EnviarNotificacaoSlack("Hello from Java!");
