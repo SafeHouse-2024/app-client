@@ -7,12 +7,12 @@ public class NotificacaoSlack {
     private static final String WEBHOOK_URL = "https://hooks.slack.com/services/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";
     public static void main(String[] args) {
         try {
-            sendSlackNotification("Hello from Java!");
+            EnviarNotificacaoSlack("Hello from Java!");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static void sendSlackNotification(String message) throws Exception {
+    public static void EnviarNotificacaoSlack(String message) throws Exception {
         String payload = "{\"text\":\"" + message + "\"}";
 
         URL url = new URL(WEBHOOK_URL);
