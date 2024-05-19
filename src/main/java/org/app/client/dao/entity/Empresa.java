@@ -7,6 +7,7 @@ public class Empresa {
   private String razaoSocial;
   private String telefone;
   private String cnpj;
+  private String codigoCriacao;
 
   public Empresa() {
   }
@@ -66,6 +67,14 @@ public class Empresa {
 
   public void setCnpj(String cnpj) {
     this.cnpj = cnpj;
+  }
+
+  public String getCodigoCriacao() {
+    return codigoCriacao;
+  }
+
+  public void setCodigoCriacao(String codigoCriacao) {
+    this.codigoCriacao = codigoCriacao;
   }
 
   @Override

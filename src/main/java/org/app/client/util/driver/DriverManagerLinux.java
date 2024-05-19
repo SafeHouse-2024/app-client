@@ -1,6 +1,8 @@
 package org.app.client.util.driver;
 
 import org.app.client.conexao.Conexao;
+import org.app.client.dao.controller.DarkStoreController;
+import org.app.client.dao.controller.EmpresaController;
 import org.app.client.dao.entity.Computador;
 import org.app.client.util.ExecutarPrograma;
 import org.app.client.util.websocket.Websocket;
@@ -31,7 +33,7 @@ public class DriverManagerLinux {
                     bw.close();
                     getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
                     try {
-                        Websocket.defineEventMessage("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
+                        Websocket.defineEventMessage("Um pendrive foi ejetado da %s".formatted(computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()), computador.getMacAddress());
                     } catch (URISyntaxException e) {
                         throw new RuntimeException(e);
                     }

@@ -7,9 +7,7 @@ import java.util.List;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import org.app.client.dao.controller.*;
-import org.app.client.dao.entity.Componente;
-import org.app.client.dao.entity.Computador;
-import org.app.client.dao.entity.NomeProcesso;
+import org.app.client.dao.entity.*;
 import org.app.client.login.Login;
 
 import com.github.britooo.looca.api.core.Looca;
@@ -45,7 +43,7 @@ public class Main {
         UsoSistemaController usoSistemaController = new UsoSistemaController();
         Socket socket;
         try {
-            socket = Websocket.initializeWebsocketClient();
+            socket = Websocket.initializeWebsocketClient(EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()), computador.getMacAddress());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

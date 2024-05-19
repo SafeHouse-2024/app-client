@@ -79,7 +79,7 @@ public class Inicializacao implements Runnable{
             //Memoria RAM
             Componente memoria = componenteController.adicionarComponente("Memória", computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("Memória Total",
-                    String.valueOf("%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9))), memoria.getIdComponente());
+                    "%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)), memoria.getIdComponente());
             System.out.println("Sua máquina tem %.2fGB de memória RAM.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
 
             //Disco Rígido
@@ -89,8 +89,8 @@ public class Inicializacao implements Runnable{
                     if(volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9)){
                         Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                         if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(i).getTotal() / Math.pow(10, 9))), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(i).getDisponivel() / Math.pow(10, 9))), disco.getIdComponente());
                             System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
                         }
                     }
@@ -99,8 +99,8 @@ public class Inicializacao implements Runnable{
                     if (volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9) && !volumes.get(i).getUUID().equals(volumeArmazenado.getUUID())) {
                         Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                         if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9)), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(i).getDisponivel() / Math.pow(10, 9))), disco.getIdComponente());
                             System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
                         }
                         volumeArmazenado = volumes.get(i);
