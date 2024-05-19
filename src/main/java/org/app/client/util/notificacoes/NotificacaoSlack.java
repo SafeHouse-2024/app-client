@@ -1,10 +1,10 @@
-package org.app.client.notificacoes;
+package org.app.client.util.notificacoes;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.OutputStream;
 
 public class NotificacaoSlack {
-    private static final String WEBHOOK_URL = "https://hooks.slack.com/services/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";
+    private static final String WEBHOOK_URL = "https://hooks.slack.com/services/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";
     public static void main(String[] args) {
         try {
             EnviarNotificacaoSlack("Hello from Java!");
