@@ -18,8 +18,6 @@ import org.app.client.util.websocket.Websocket;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
-        Looca teste = new Looca();
-
         String so = System.getProperty("os.name");
         String user = System.getProperty("user.name");
 

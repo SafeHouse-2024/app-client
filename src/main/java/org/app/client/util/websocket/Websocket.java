@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class Websocket {
 
+    private static Socket socketApp;
+
     public static Socket initializeWebsocketClient(Empresa empresa, DarkStore darkStore, String macAddress) throws URISyntaxException {
         Map<String, List<String>> nome = new HashMap<>();
         String nomeEmpresa = empresa.getNome();
@@ -24,11 +26,12 @@ public class Websocket {
         Socket socket = IO.socket("http://127.0.0.1:3001", options).connect();
         socket.on(Socket.EVENT_CONNECT, objects -> System.out.println("Conectado"));
         socket.on(Socket.EVENT_DISCONNECT, objects -> System.out.println("Desconectado"));
-        return socket;
+        socketApp = socket;
+        return socketApp;
     }
 
-    public static void defineEventMessage(String message, Empresa empresa, DarkStore darkStore, String macAddress) throws URISyntaxException {
-        initializeWebsocketClient(empresa, darkStore, macAddress).emit("send_message_%s".formatted(empresa.getNome()), message);
-        initializeWebsocketClient(empresa, darkStore, macAddress).emit("send_message_%s_%s".formatted(empresa.getNome(), darkStore.getNome()), message);
+    public static void defineEventMessage(String message, Empresa empresa, DarkStore darkStore) throws URISyntaxException {
+        socketApp.emit("send_message_%s".formatted(empresa.getNome()), message);
+        socketApp.emit("send_message_%s_%s".formatted(empresa.getNome(), darkStore.getNome()), message);
     }
 }
