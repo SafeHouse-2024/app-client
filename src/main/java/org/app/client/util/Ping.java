@@ -18,10 +18,11 @@ public class Ping {
         System.out.println("aqui" + response.getCommandOutput());
         if (response.isError()) {
             System.out.println("Erro ao executar o comando");
-        }
-        String[] linhas = response.getCommandOutput().split("\n");
-        for (String linha : linhas) {
-            dados.add(linha);
+        }else {
+            String[] linhas = response.getCommandOutput().split("\n");
+            for (String linha : linhas) {
+                dados.add(linha);
+            }
         }
     }
 
