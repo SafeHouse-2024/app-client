@@ -51,6 +51,7 @@ public class Main {
          while(true){
             System.out.println("Iniciando captura de dados");
 
+
              ExecutarPrograma.executarPrograma(so, user, computador, processos, sudo);
              Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);
              Inicializacao.registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);

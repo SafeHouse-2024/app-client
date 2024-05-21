@@ -126,8 +126,10 @@ public class Inicializacao {
     public static void capturarRegistros(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca) {
         Componente processador = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Processador")).findFirst().get();
         Componente memoria = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Memória")).findFirst().get();
+        Componente rede = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Rede")).findFirst().get();
         List<Componente> discos = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Disco")).toList();
 //        discos.forEach(disco -> pegarDisco(disco, looca));
+
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getProcessador().getUso())), processador.getIdComponente());
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9))), memoria.getIdComponente());
         System.out.println("Inserindo a medição de RAM no banco de dados");
