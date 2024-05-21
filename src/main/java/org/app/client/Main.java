@@ -24,7 +24,7 @@ public class Main {
         String so = System.getProperty("os.name");
         Integer opcao = 1;
         String user = System.getProperty("user.name");
-        ping.pingar();
+//        ping.pingar();
 //        ping.pingar(so);
 
         Integer fkSistemaOperacional = 0;

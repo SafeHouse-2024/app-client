@@ -20,6 +20,10 @@ public class Ping {
     private String download;
     private String upload;
 
+    public Ping() {
+        pingar();
+    }
+
     public void pingar() {
         try {
             Process process = Runtime.getRuntime().exec(SPEEDTEST_CLI_COMMAND);
@@ -29,9 +33,8 @@ public class Ping {
             download = reader.readLine();
             upload = reader.readLine();
 
-            System.out.println("salve " + download);
             process.waitFor();
-//            process.destroy();
+            process.destroy();
         } catch (IOException | InterruptedException e) {
             System.err.println("Erro ao executar o comando SpeedTest CLI: " + e.getMessage());
         }

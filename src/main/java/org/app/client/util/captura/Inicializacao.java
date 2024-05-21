@@ -26,7 +26,6 @@ public class Inicializacao {
         ComponenteController componenteController = new ComponenteController();
         ComputadorController computadorController = new ComputadorController();
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
-        Ping ping = new Ping();
         String so = System.getProperty("os.name");
 
         List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces();
@@ -39,20 +38,16 @@ public class Inicializacao {
         }catch (EmptyResultDataAccessException e){
             System.out.println("Máquina não cadastrada!");
         }
-
-        if (computador.getAtivo() != null && computador.getAtivo().equals("Inativo") &&
-                codigoAcesso != null && codigoAcesso.equals(computador.getCodigoAcesso())) {
-            // Sua lógica aqui
-        }
-        {
+        if (computador.getAtivo().equals("Inativo") && codigoAcesso.equals(computador.getCodigoAcesso())) {
 
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
-            // // Adicionando componentes
+            // Adicionando componentes
             //Rede
-
 
             System.out.println("O id do computador é: " + computador.getIdComputador());
             Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
+            System.out.println("O id do componente rede é: " + rede.getIdComponente());
+            Ping ping = new Ping();
             caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.getPing(), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("Dowload", ping.getDownload(), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("Upload", ping.getUpload(), rede.getIdComponente());
