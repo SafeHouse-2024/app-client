@@ -9,36 +9,44 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ping {
-    private String comando = "speedtest-cli --simple";
-    private List<String> dados = new ArrayList<>();
-    public void pingar() {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
-        PowerShellResponse response = PowerShell.executeSingleCommand(comando);
-        System.out.println("aqui" + response.getCommandOutput());
-        if (response.isError()) {
-            System.out.println("Erro ao executar o comando");
-        }else {
-            String[] linhas = response.getCommandOutput().split("\n");
-            for (String linha : linhas) {
-                dados.add(linha);
-            }
+public class Ping {
+    private static final String SPEEDTEST_CLI_COMMAND = "speedtest-cli --simple";
+
+    private String ping;
+    private String download;
+    private String upload;
+
+    public void pingar() {
+        try {
+            Process process = Runtime.getRuntime().exec(SPEEDTEST_CLI_COMMAND);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            ping = reader.readLine();
+            download = reader.readLine();
+            upload = reader.readLine();
+
+            System.out.println("salve " + download);
+            process.waitFor();
+//            process.destroy();
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Erro ao executar o comando SpeedTest CLI: " + e.getMessage());
         }
     }
 
-    public String getDownload(){
-        pingar();
-        return dados.get(1);
+    public String getPing() {
+        return ping;
     }
 
-    public String getUpload(){
-        pingar();
-        return dados.get(2);
+    public String getDownload() {
+        return download;
     }
 
-    public String getPing(){
-        pingar();
-        return dados.get(0);
+    public String getUpload() {
+        return upload;
     }
 }
 

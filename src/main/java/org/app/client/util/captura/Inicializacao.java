@@ -34,6 +34,7 @@ public class Inicializacao {
         System.out.println("O macAddress da máquina é " + macAddress);
         Computador computador = new Computador();
         try{
+            System.out.println("To aqui no try");
             computador = computadorController.buscarMaquina(macAddress);
         }catch (EmptyResultDataAccessException e){
             System.out.println("Máquina não cadastrada!");
@@ -50,6 +51,7 @@ public class Inicializacao {
             //Rede
 
 
+            System.out.println("O id do computador é: " + computador.getIdComputador());
             Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.getPing(), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("Dowload", ping.getDownload(), rede.getIdComponente());

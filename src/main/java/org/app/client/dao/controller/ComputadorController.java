@@ -21,6 +21,7 @@ public class ComputadorController {
     JdbcTemplate getConexao = conexao.getJdbcTemplate();
     Computador computadorEncontrado = getConexao.queryForObject("SELECT * FROM Computador WHERE macAddress = '%s'".formatted(macAddress), new BeanPropertyRowMapper<>(Computador.class));
 
+    System.out.println("O computador encontrado foi o: "+ computadorEncontrado.getIdComputador());
     return computadorEncontrado;
   }
 
