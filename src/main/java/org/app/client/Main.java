@@ -11,12 +11,21 @@ import org.app.client.login.Login;
 
 import com.github.britooo.looca.api.core.Looca;
 import org.app.client.util.ExecutarPrograma;
+import org.app.client.util.Ping;
 import org.app.client.util.captura.Inicializacao;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+
+        Ping ping = new Ping();
+
+        Looca teste = new Looca();
+
         String so = System.getProperty("os.name");
+        Integer opcao = 1;
         String user = System.getProperty("user.name");
+//        ping.pingar();
+//        ping.pingar(so);
 
         Integer fkSistemaOperacional = 0;
         if(so.toUpperCase().contains("win".toUpperCase())){
@@ -41,6 +50,7 @@ public class Main {
 
          while(true){
             System.out.println("Iniciando captura de dados");
+
 
              ExecutarPrograma.executarPrograma(so, user, computador, processos, sudo);
              Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);

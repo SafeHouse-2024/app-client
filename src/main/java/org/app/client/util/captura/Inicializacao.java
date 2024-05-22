@@ -10,6 +10,7 @@ import org.app.client.dao.entity.CaracteristicaComponente;
 import org.app.client.dao.entity.Componente;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.UsoSistema;
+import org.app.client.util.Ping;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.ZoneId;
@@ -25,21 +26,32 @@ public class Inicializacao {
         ComponenteController componenteController = new ComponenteController();
         ComputadorController computadorController = new ComputadorController();
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
+        String so = System.getProperty("os.name");
 
         List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces();
         String macAddress = redes.get(redes.size() - 1).getEnderecoMac();
         System.out.println("O macAddress da máquina é " + macAddress);
         Computador computador = new Computador();
         try{
+            System.out.println("To aqui no try");
             computador = computadorController.buscarMaquina(macAddress);
         }catch (EmptyResultDataAccessException e){
             System.out.println("Máquina não cadastrada!");
         }
-
         if (computador.getAtivo().equals("Inativo") && codigoAcesso.equals(computador.getCodigoAcesso())) {
 
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
-            // // Adicionando componentes
+            // Adicionando componentes
+            //Rede
+
+//            Ping ping = new Ping();
+            System.out.println("O id do computador é: " + computador.getIdComputador());
+            Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
+            rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
+            System.out.println("O id do componente rede é: " + rede.getIdComponente());
+//            caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.getPing(), rede.getIdComponente());
+//            caracteristicaComponenteController.adicionarCaracteristica("Dowload", ping.getDownload(), rede.getIdComponente());
+//            caracteristicaComponenteController.adicionarCaracteristica("Upload", ping.getUpload(), rede.getIdComponente());
 
             // Processador
             Componente processador = componenteController.adicionarComponente("Processador",
@@ -92,7 +104,6 @@ public class Inicializacao {
                 }
             }
 
-            Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
             caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
             System.out.println("O endereço IPV4 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv4().get(0));
@@ -115,10 +126,16 @@ public class Inicializacao {
     public static void capturarRegistros(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca) {
         Componente processador = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Processador")).findFirst().get();
         Componente memoria = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Memória")).findFirst().get();
+        Componente rede = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Rede")).findFirst().get();
         List<Componente> discos = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Disco")).toList();
 //        discos.forEach(disco -> pegarDisco(disco, looca));
+        Ping ping = new Ping();
+
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getProcessador().getUso())), processador.getIdComponente());
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9))), memoria.getIdComponente());
+        registroComponenteController.adicionarRegistro("Ping", String.valueOf("%s".formatted(ping.getPing())), rede.getIdComponente());
+        registroComponenteController.adicionarRegistro("Download", String.valueOf("%s".formatted(ping.getDownload())), rede.getIdComponente());
+        registroComponenteController.adicionarRegistro("Upload", String.valueOf("%s".formatted(ping.getUpload())), rede.getIdComponente());
         System.out.println("Inserindo a medição de RAM no banco de dados");
         System.out.println("A taxa de uso da memória RAM é: %.2f GB".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9)));
         System.out.println("Inserindo a medição de CPU no banco de dados");
