@@ -11,7 +11,7 @@ import org.app.client.login.Login;
 
 import com.github.britooo.looca.api.core.Looca;
 import org.app.client.util.ExecutarPrograma;
-import org.app.client.util.Ping;
+import org.app.client.herancas.Ping;
 import org.app.client.util.captura.Inicializacao;
 
 public class Main {

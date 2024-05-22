@@ -1,19 +1,12 @@
-package org.app.client.util;
+package org.app.client.herancas;
 
-import com.profesorfalken.jpowershell.PowerShell;
-import com.profesorfalken.jpowershell.PowerShellResponse;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import org.app.client.dao.controller.CaracteristicaComponenteController;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class Ping {
+public class Ping extends CaracteristicaComponenteController {
     private static final String SPEEDTEST_CLI_COMMAND = "speedtest-cli --simple";
 
     private String ping;

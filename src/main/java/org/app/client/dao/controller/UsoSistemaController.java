@@ -13,22 +13,22 @@ import java.time.LocalDateTime;
 public class UsoSistemaController {
 
     Conexao conexao = new Conexao();
-    ConexaoSql conexaoSql = new ConexaoSql();
+//    ConexaoSql conexaoSql = new ConexaoSql();
 
     public void adicionarUsoSistema(Instant tempoInicializacao, Long tempoMinutos, Integer fkSistemaOperacional, Computador computador){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
-        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+//        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
 
         getConexao.update("INSERT INTO UsoSistema (dataInicializacao, tempoAtividadeMinutos, fkSistemaOperacional, fkComputador) VALUES (?, ?, ?, ?)", tempoInicializacao, tempoMinutos, fkSistemaOperacional, computador.getIdComputador());
-        getConexaoSql.update("INSERT INTO UsoSistema (dataInicializacao, tempoAtividadeMinutos, fkSistemaOperacional, fkComputador) VALUES (?, ?, ?, ?)", tempoInicializacao, tempoMinutos, fkSistemaOperacional, computador.getIdComputador());
+//        getConexaoSql.update("INSERT INTO UsoSistema (dataInicializacao, tempoAtividadeMinutos, fkSistemaOperacional, fkComputador) VALUES (?, ?, ?, ?)", tempoInicializacao, tempoMinutos, fkSistemaOperacional, computador.getIdComputador());
     }
 
     public void atualizarUsoSistema(Long tempoMinutos, UsoSistema usoSistema){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
-        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+//        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
 
         getConexao.update("UPDATE UsoSistema SET tempoAtividadeMinutos = ? WHERE idUsoSistema = ?", tempoMinutos, usoSistema.getIdUsoSistema());
-        getConexaoSql.update("UPDATE UsoSistema SET tempoAtividadeMinutos = ? WHERE idUsoSistema = ?", tempoMinutos, usoSistema.getIdUsoSistema());
+//        getConexaoSql.update("UPDATE UsoSistema SET tempoAtividadeMinutos = ? WHERE idUsoSistema = ?", tempoMinutos, usoSistema.getIdUsoSistema());
     }
 
     public UsoSistema pegarUsoSistema(Computador computador){

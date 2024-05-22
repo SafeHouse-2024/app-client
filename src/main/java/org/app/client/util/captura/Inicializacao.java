@@ -1,7 +1,6 @@
 package org.app.client.util.captura;
 
 import com.github.britooo.looca.api.core.Looca;
-import com.github.britooo.looca.api.group.discos.Disco;
 import com.github.britooo.looca.api.group.discos.Volume;
 import com.github.britooo.looca.api.group.rede.RedeInterface;
 import com.github.britooo.looca.api.group.sistema.Sistema;
@@ -10,14 +9,12 @@ import org.app.client.dao.entity.CaracteristicaComponente;
 import org.app.client.dao.entity.Componente;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.UsoSistema;
-import org.app.client.util.Ping;
+import org.app.client.herancas.Ping;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Inicializacao {
 
@@ -124,12 +121,12 @@ public class Inicializacao {
     }
 
     public static void capturarRegistros(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca) {
+        Ping ping = new Ping();
         Componente processador = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Processador")).findFirst().get();
         Componente memoria = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Memória")).findFirst().get();
         Componente rede = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Rede")).findFirst().get();
         List<Componente> discos = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Disco")).toList();
 //        discos.forEach(disco -> pegarDisco(disco, looca));
-        Ping ping = new Ping();
 
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getProcessador().getUso())), processador.getIdComponente());
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9))), memoria.getIdComponente());
