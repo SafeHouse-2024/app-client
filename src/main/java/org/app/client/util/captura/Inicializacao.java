@@ -30,7 +30,6 @@ public class Inicializacao {
         System.out.println("O macAddress da máquina é " + macAddress);
         Computador computador = new Computador();
         try{
-            System.out.println("To aqui no try");
             computador = computadorController.buscarMaquina(macAddress);
         }catch (EmptyResultDataAccessException e){
             System.out.println("Máquina não cadastrada!");
@@ -39,16 +38,10 @@ public class Inicializacao {
 
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
             // Adicionando componentes
-            //Rede
 
-//            Ping ping = new Ping();
-            System.out.println("O id do computador é: " + computador.getIdComputador());
+            //Rede
             Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
-            rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
-            System.out.println("O id do componente rede é: " + rede.getIdComponente());
-//            caracteristicaComponenteController.adicionarCaracteristica("Ping", ping.getPing(), rede.getIdComponente());
-//            caracteristicaComponenteController.adicionarCaracteristica("Dowload", ping.getDownload(), rede.getIdComponente());
-//            caracteristicaComponenteController.adicionarCaracteristica("Upload", ping.getUpload(), rede.getIdComponente());
+            System.out.println("O id do computador é: " + computador.getIdComputador());
 
             // Processador
             Componente processador = componenteController.adicionarComponente("Processador",
@@ -177,11 +170,5 @@ public class Inicializacao {
         usoSistemaController.atualizarUsoSistema(sistema.getTempoDeAtividade(), usoSistema);
 
         System.out.println("O tempo de atividade do sistema é: " + sistema.getTempoDeAtividade());
-
     }
-
-
-
-
 }
-

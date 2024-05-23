@@ -1,16 +1,16 @@
 package org.app.client.herancas;
 
 import com.github.britooo.looca.api.core.Looca;
+import org.app.client.dao.controller.ComponenteController;
 import org.app.client.dao.entity.Componente;
 
-public class Memoria extends Componente{
+public class Memoria extends ComponenteController {
     private Integer idMemoria;
     private String fabricante;
     private Integer fkComponente;
     private Looca looca;
 
-    public Memoria(Integer idComponente, String nome, Integer fkComputador, Integer idMemoria, String fabricante, Integer fkComponente, Looca looca) {
-        super(idComponente, nome, fkComputador);
+    public Memoria(Integer idMemoria, String fabricante, Integer fkComponente, Looca looca) {
         this.idMemoria = idMemoria;
         this.fabricante = fabricante;
         this.fkComponente = fkComponente;
@@ -18,6 +18,11 @@ public class Memoria extends Componente{
     }
 
     public Memoria() {
+    }
+
+    @Override
+    public Componente adicionarComponente(String nome, Integer fkComputador) {
+        return super.adicionarComponente(nome, fkComputador);
     }
 
     public void atualizarValorCaracteristica(String valor, Integer idCaracteristica){

@@ -16,10 +16,10 @@ public class ComponenteController {
 
     public Componente adicionarComponente(String nome, Integer fkComputador){
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
-        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+//        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
 
         getConexao.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
-        getConexaoSql.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+//        getConexaoSql.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
 
          return pegarUltimoComponenteInserido(nome, fkComputador);
     }
