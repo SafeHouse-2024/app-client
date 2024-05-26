@@ -2,6 +2,7 @@ package org.app.client.util.tasks;
 
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import org.app.client.Log;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.NomeProcesso;
 import org.app.client.util.ExecutarPrograma;
@@ -9,6 +10,7 @@ import org.buildobjects.process.ExternalProcessFailureException;
 import org.buildobjects.process.ProcBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 public class TaskManager {
@@ -31,7 +33,12 @@ public class TaskManager {
             PowerShellResponse response = PowerShell.executeSingleCommand(comandoWindows.formatted(processo.getNome()));
 
             if(response.getCommandOutput().contains("ÊXITO:")){
-                getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+                getConexao.update("INSERT INTO org.app.client.Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+                try {
+                    Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
         });
@@ -48,7 +55,12 @@ public class TaskManager {
                 textoInvalido = e.getStderr().trim();
             }
             if(textoInvalido.contains("%s: no process found".formatted(processo.getNome()))) return;
-            getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+            getConexao.update("INSERT INTO org.app.client.Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+            try {
+                Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
         });
 

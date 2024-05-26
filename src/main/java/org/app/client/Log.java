@@ -1,3 +1,5 @@
+package org.app.client;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -17,19 +19,30 @@ public class Log {
     }
 
     public static void generateLog(String mensagem) throws IOException {
-        Path mainDirectoryPath = Paths.get("C:\\Users\\angel\\OneDrive\\Área de Trabalho\\FACULDADE NATHAN");
+
+        String nomeUser = System.getProperty("user.name");
+        String so = System.getProperty("os.name");
+
+        Path mainDirectoryPath = Paths.get("");
+
+        if(so.toUpperCase().contains("win".toUpperCase())){
+            mainDirectoryPath = Paths.get("C:\\Users\\%s\\Documents" .formatted(nomeUser));
+        }
+        else if (so.contains("nux")) {
+            mainDirectoryPath = Paths.get("/home/%s/Documents" .formatted(nomeUser));
+        }
 
         if (!Files.exists(mainDirectoryPath)) {
             Files.createDirectory(mainDirectoryPath);
         }
 
-        Path logDirectoryPath = mainDirectoryPath.resolve("logs");
+        Path logDirectoryPath = mainDirectoryPath.resolve("logs-SPECTRA");
 
         if (!Files.exists(logDirectoryPath)) {
             Files.createDirectory(logDirectoryPath);
         }
 
-        File logFile = new File(logDirectoryPath.toString(), "logs.txt");
+        File logFile = new File(logDirectoryPath.toString(), "log de segurança.txt");
 
         if (!logFile.exists()) {
             logFile.createNewFile();
@@ -48,6 +61,6 @@ public class Log {
         bw.close();
         fw.close();
 
-        System.out.println("Log generated successfully!");
+        System.out.println("org.app.client.Log Gerado com sucesso!");
     }
 }

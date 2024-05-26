@@ -2,11 +2,13 @@ package org.app.client.util.driver;
 
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import org.app.client.Log;
 import org.app.client.dao.entity.Computador;
 import org.app.client.util.ExecutarPrograma;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +44,13 @@ public class DriverManagerWindows {
         driversInvalidos().forEach(drive -> {
             PowerShellResponse response = comandoPowerShell(drive);
             if(response.getCommandOutput().isEmpty()){
-                getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+                getConexao.update("INSERT INTO org.app.client.Log(descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+                try {
+                    Log.generateLog("Um pendrive foi ejetado da máquina");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         });
     }
