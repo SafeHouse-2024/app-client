@@ -2,9 +2,22 @@ package org.app.client.util.notificacoes;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 public class NotificacaoSlack {
-    private static final String WEBHOOK_URL = "https://hooks.slack.com/services/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";
+    private static final String WEBHOOK_URL;
+
+    static {
+        String url = "";
+        try {
+            url = new String(Files.readAllBytes(Paths.get("webhook_url.txt")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        WEBHOOK_URL = url.trim();
+    }
     public static void main(String[] args) {
         try {
             EnviarNotificacaoSlack("Hello from Java!");
