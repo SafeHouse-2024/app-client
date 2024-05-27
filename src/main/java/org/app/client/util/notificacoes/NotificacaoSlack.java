@@ -20,7 +20,7 @@ public class NotificacaoSlack {
     }
     public static void main(String[] args) {
         try {
-            EnviarNotificacaoSlack("Hello from Java!");
+            EnviarNotificacaoSlack("Teste funcionando com gitignore!");
         } catch (Exception e) {
             e.printStackTrace();
         }
