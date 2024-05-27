@@ -12,7 +12,7 @@ public class NotificacaoSlack {
     static {
         String url = "";
         try {
-            url = new String(Files.readAllBytes(Paths.get("webhook_url.txt")));
+            url = new String(Files.readAllBytes(Paths.get("webhook_url")));
         } catch (IOException e) {
             e.printStackTrace();
         }
