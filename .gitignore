@@ -38,4 +38,4 @@ build/
 .DS_Store
 
 ### Url para mandar notificações ao slack
-webhook_url.txt
+webhook_url.txt/
