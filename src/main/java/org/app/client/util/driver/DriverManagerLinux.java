@@ -35,6 +35,8 @@ public class DriverManagerLinux {
                         getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
                     }catch(Exception e){
                         System.out.println("Houve um problema na conexão do banco de dados");
+                    }finally{
+                        Log.generateLog("Um pendrive foi ejetado da máquina");
                     }
 
 

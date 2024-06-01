@@ -37,10 +37,14 @@ public class TaskManager {
                     getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
                     JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
                     getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
-
-                    Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Houve um problema de conexão");
+                }finally {
+                    try {
+                        Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -62,9 +66,15 @@ public class TaskManager {
                 getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
                 JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
                 getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
-                Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+
+            } catch (Exception e) {
+                System.out.println("Houve um problema de conexão");
+            }finally {
+                try {
+                    Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
         });

@@ -51,6 +51,12 @@ public class DriverManagerWindows {
                     Log.generateLog("Um pendrive foi ejetado da máquina");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
+                }finally {
+                    try {
+                        Log.generateLog("Um pendrive foi ejetado da máquina");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
             }

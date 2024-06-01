@@ -17,12 +17,6 @@ public class Log {
     private static FileWriter fw;
     private static Path logFilePath;
 
-    public static void main(String[] args) throws IOException {
-        for (int i = 0; i < 101; i++) {
-            generateLog("Arroz e feijão");
-        }
-    }
-
     public static void generateLog(String mensagem) throws IOException {
         if (bw == null || Files.size(logFilePath) >= MAX_SIZE) {
             openNewLogFile();
