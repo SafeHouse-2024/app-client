@@ -16,7 +16,7 @@ import java.util.List;
 public class DriverManagerLinux {
 
     public static void removerDriversInvalidos(String user, Computador computador, String sudo){
-        JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
+
         File pendrivesLinux = new File("/media/%s".formatted(user));
         if (pendrivesLinux.list() != null){
             List<String> pendrives = List.of(pendrivesLinux.list());
@@ -28,7 +28,15 @@ public class DriverManagerLinux {
                     bw.write(sudo);
                     bw.flush();
                     bw.close();
-                    getConexao.update("INSERT INTO Logs (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+                    try{
+                        JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
+                        getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+                        JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
+                        getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+                    }catch(Exception e){
+                        System.out.println("Houve um problema na conexão do banco de dados");
+                    }
+
 
                         Log.generateLog("Um pendrive foi ejetado da máquina");
 

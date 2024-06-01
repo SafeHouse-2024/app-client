@@ -15,19 +15,28 @@ public class ComponenteController {
     ConexaoSql conexaoSql = new ConexaoSql();
 
     public Componente adicionarComponente(String nome, Integer fkComputador){
-        JdbcTemplate getConexao = conexao.getJdbcTemplate();
-//        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+        try{
+            JdbcTemplate getConexao = conexao.getJdbcTemplate();
+            getConexao.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+        }catch (Exception e){
+            System.out.println("Houve um problema com a conexão local");
+        }
 
-        getConexao.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
-//        getConexaoSql.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+        try{
+            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+            getConexaoSql.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+        }catch (Exception e){
+            System.out.println("Houve um problema com a conexão remota");
+        }
+
 
          return pegarUltimoComponenteInserido(nome, fkComputador);
     }
 
     private Componente pegarUltimoComponenteInserido(String nome, Integer fkComputador) {
-        JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
-
+        // Trocar pela requisição remota
         try {
+            JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
             return jdbcTemplate.queryForObject(
                     "SELECT * FROM Componente WHERE nome = ? AND fkComputador = ? ORDER BY idComponente DESC LIMIT 1",
                     new BeanPropertyRowMapper<>(Componente.class),
@@ -40,8 +49,9 @@ public class ComponenteController {
     }
 
     public List<Componente> listarComponentes(Integer fkComputador) {
-        JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
+        // Trocar para requisição remota
         try {
+            JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
             return jdbcTemplate.query(
                     "SELECT * FROM Componente WHERE fkComputador = ?",
                     new BeanPropertyRowMapper<>(Componente.class),

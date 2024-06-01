@@ -6,8 +6,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.Console;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Login {
@@ -51,12 +49,13 @@ public class Login {
     }
 
     private boolean autenticar(String email, String senha, String codigoAcesso) {
-        JdbcTemplate getConexao = conexao.getJdbcTemplate();
 
         String usuario = null;
+        // Trocar para conexão remota
         try{
-            usuario = getConexao.queryForObject("SELECT u.email FROM Usuario u JOIN Computador c ON c.fkUsuario = u.idUsuario WHERE u.email = ? AND u.senha = ? AND c.codigoAcesso = ? AND u.tipo = ?", new BeanPropertyRowMapper<>(String.class), email, senha, codigoAcesso, "Máquina");
-        }catch (EmptyResultDataAccessException e){
+            JdbcTemplate getConexao = conexao.getJdbcTemplate();
+            usuario = getConexao.queryForObject("SELECT u.email FROM Usuario u JOIN Computador c ON c.fkUsuario = u.idUsuario WHERE u.email = ? AND u.senha = ? AND c.codigoAcesso = ? AND u.tipo = ?", new BeanPropertyRowMapper<>(String.class), email, senha, codigoAcesso, "Maquina");
+        }catch (Exception e){
             System.out.println("Não foi possível se autenticar, preencha os campos corretamente");
         }
 

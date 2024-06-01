@@ -40,14 +40,16 @@ public class DriverManagerWindows {
 
     // Remove os drivers inválidos
     public static void removerDriversInvalidos(Computador computador){
-        JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
         driversInvalidos().forEach(drive -> {
             PowerShellResponse response = comandoPowerShell(drive);
             if(response.getCommandOutput().isEmpty()){
-                getConexao.update("INSERT INTO org.app.client.Log(descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
                 try {
+                    JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
+                    JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
+                    getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
+                    getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
                     Log.generateLog("Um pendrive foi ejetado da máquina");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
 

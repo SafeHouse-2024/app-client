@@ -7,16 +7,22 @@ import org.app.client.dao.entity.CaracteristicaComponente;
 import java.util.List;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
-public class CaracteristicaComponenteController {
+public class CaracteristicaComponenteController{
     Conexao conexao = new Conexao();
-//    ConexaoSql conexaoSql = new ConexaoSql();
+    ConexaoSql conexaoSql = new ConexaoSql();
 
     public void adicionarCaracteristica(String nome, String valor, Integer fkComponente){
-        JdbcTemplate getConexao = conexao.getJdbcTemplate();
-//        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+        try{
+            JdbcTemplate getConexao = conexao.getJdbcTemplate();
+            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+            getConexao.update("INSERT INTO CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
+            getConexaoSql.update("INSERT INTO CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
+        }catch (Exception e){
+            e.getMessage();
+        }
 
-        getConexao.update("INSERT INTO CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
-//        getConexaoSql.update("INSERT INTO CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
+
+
     }
 
     public List<CaracteristicaComponente> listarCaracteristicas(Integer fkComponente){

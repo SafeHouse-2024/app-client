@@ -1,6 +1,7 @@
 package org.app.client.util;
 
 import org.app.client.conexao.Conexao;
+import org.app.client.conexao.ConexaoSql;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.NomeProcesso;
 import org.app.client.util.driver.DriverManagerLinux;
@@ -12,6 +13,7 @@ import java.util.List;
 public class ExecutarPrograma {
 
     public static Conexao conexao = new Conexao();
+    public static ConexaoSql conexaoSql = new ConexaoSql();
 
     public static void executarPrograma(String so, String user, Computador computador, List<NomeProcesso> processos, String sudo){
 

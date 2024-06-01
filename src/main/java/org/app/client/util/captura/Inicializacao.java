@@ -94,8 +94,18 @@ public class Inicializacao {
                 }
             }
 
-            caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
-            caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
+            try{
+                caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
+            }catch(IndexOutOfBoundsException e){
+                System.out.println("Houve um problema no armazenamento do IPV6");
+            }
+
+            try{
+                caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
+            }catch (IndexOutOfBoundsException e){
+                System.out.println("Houve um problema no armazenamento do IPV4");
+            }
+
             System.out.println("O endereço IPV4 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv4().get(0));
             System.out.println("O endereço IPV6 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv6().get(0));
             System.out.println("O sistema operacional da máquina é " + looca.getSistema().getSistemaOperacional());

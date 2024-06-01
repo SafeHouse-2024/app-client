@@ -28,15 +28,18 @@ public class TaskManager {
     }
 
     private static void tasksKillWindows(Computador computador, List<NomeProcesso> listaProcessosProibidosWindows){
-        JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
         listaProcessosProibidosWindows.forEach(processo -> {
             PowerShellResponse response = PowerShell.executeSingleCommand(comandoWindows.formatted(processo.getNome()));
 
             if(response.getCommandOutput().contains("ÊXITO:")){
-                getConexao.update("INSERT INTO org.app.client.Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
                 try {
+                    JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
+                    getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+                    JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
+                    getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+
                     Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
-                } catch (IOException e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -45,7 +48,6 @@ public class TaskManager {
     }
 
     private static void taskKillLinux(Computador computador, List<NomeProcesso> listaProcessosProibidosLinux){
-        JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
         listaProcessosProibidosLinux.forEach(processo -> {
             String textoInvalido = "";
             try{
@@ -55,8 +57,11 @@ public class TaskManager {
                 textoInvalido = e.getStderr().trim();
             }
             if(textoInvalido.contains("%s: no process found".formatted(processo.getNome()))) return;
-            getConexao.update("INSERT INTO org.app.client.Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
             try {
+                JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
+                getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+                JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
+                getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
                 Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
