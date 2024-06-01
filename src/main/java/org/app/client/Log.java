@@ -1,7 +1,6 @@
 package org.app.client;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,20 +11,20 @@ import java.time.format.DateTimeFormatter;
 
 public class Log {
 
-    private static final int MAX_LINES = 100;
-    private static int lineCount = 0;
+    private static final long MAX_SIZE = 4 * 1024;
     private static int fileCount = 1;
     private static BufferedWriter bw;
     private static FileWriter fw;
+    private static Path logFilePath;
 
     public static void main(String[] args) throws IOException {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 101; i++) {
             generateLog("Arroz e feijão");
         }
     }
 
     public static void generateLog(String mensagem) throws IOException {
-        if (bw == null) {
+        if (bw == null || Files.size(logFilePath) >= MAX_SIZE) {
             openNewLogFile();
         }
 
@@ -35,28 +34,26 @@ public class Log {
 
         bw.write(timestamp + " - " + mensagem);
         bw.newLine();
-        lineCount++;
-
-        if (lineCount >= MAX_LINES) {
-            bw.close();
-            fw.close();
-            lineCount = 0;
-            openNewLogFile();
-        }
+        bw.flush();
 
         System.out.println("Log Gerado com sucesso!");
     }
 
     private static void openNewLogFile() throws IOException {
+        if (bw != null) {
+            bw.close();
+            fw.close();
+        }
+
         String nomeUser = System.getProperty("user.name");
         String so = System.getProperty("os.name");
 
         Path mainDirectoryPath;
 
         if (so.toUpperCase().contains("win".toUpperCase())) {
-            mainDirectoryPath = Paths.get("C:\\Users\\%s\\Documents".formatted(nomeUser));
+            mainDirectoryPath = Paths.get(String.format("C:\\Users\\%s\\Documents", nomeUser));
         } else {
-            mainDirectoryPath = Paths.get("/home/%s/Documents".formatted(nomeUser));
+            mainDirectoryPath = Paths.get(String.format("/home/%s/Documents", nomeUser));
         }
 
         if (!Files.exists(mainDirectoryPath)) {
@@ -70,13 +67,9 @@ public class Log {
         }
 
         String logFileName = "log_de_seguranca_" + fileCount + ".txt";
-        File logFile = new File(logDirectoryPath.toString(), logFileName);
+        logFilePath = logDirectoryPath.resolve(logFileName);
 
-        if (!logFile.exists()) {
-            logFile.createNewFile();
-        }
-
-        fw = new FileWriter(logFile, true);
+        fw = new FileWriter(logFilePath.toFile(), true);
         bw = new BufferedWriter(fw);
         fileCount++;
     }
