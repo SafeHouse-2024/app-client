@@ -78,7 +78,7 @@ public class Main {
         JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
 
         String query =
-                "SELECT DISTINCT(pc.idComputador), count(rc.valor) " +
+                "SELECT DISTINCT(pc.idComputador), count(rc.valor) as 'count' "+
                         "FROM RegistroComponente rc " +
                         "JOIN Componente c ON c.idComponente = rc.fkComponente " +
                         "JOIN Computador pc ON c.fkComputador = pc.IdComputador " +
@@ -86,11 +86,11 @@ public class Main {
                         "WHERE dataRegistro >= NOW() - INTERVAL 30000 MINUTE " +
                         "AND c.nome LIKE 'Processador' " +
                         "AND rc.valor > 80 " +
-                        "AND pc.idComputador = 7 " +
+                        "AND pc.idComputador = ? " +
                         "GROUP BY pc.idComputador";
 
         try {
-            List<ComputadorAlerta> alertas = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(ComputadorAlerta.class));
+            List<ComputadorAlerta> alertas = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(ComputadorAlerta.class), ComputadorAlerta.getIdComputador());
 
             for (ComputadorAlerta alerta : alertas) {
                 if (alerta.getCount() > 0) {
@@ -108,7 +108,7 @@ public class Main {
         JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
 
         String query =
-                "SELECT DISTINCT(pc.idComputador), count(rc.valor) " +
+                "SELECT DISTINCT(pc.idComputador), count(rc.valor) as 'count' " +
                         "FROM RegistroComponente rc " +
                         "JOIN Componente c ON c.idComponente = rc.fkComponente " +
                         "JOIN Computador pc ON c.fkComputador = pc.IdComputador " +
@@ -119,13 +119,13 @@ public class Main {
                         "FROM CaracteristicaComponente ca " +
                         "JOIN Componente c ON c.idComponente = ca.fkComponente " +
                         "JOIN Computador pc ON pc.idComputador = c.fkComputador " +
-                        "WHERE pc.idComputador = 7 " +
+                        "WHERE pc.idComputador = ? " +
                         "AND c.nome LIKE 'Memória' " +
                         "AND ca.nome LIKE 'Memória Total'), ' ', 1) * 0.8 " +
                         "GROUP BY pc.idComputador";
 
         try {
-            List<ComputadorAlerta> alertas = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(ComputadorAlerta.class));
+            List<ComputadorAlerta> alertas = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(ComputadorAlerta.class), ComputadorAlerta.getIdComputador());
 
             for (ComputadorAlerta alerta : alertas) {
                 if (alerta.getCount() > 0) {
@@ -152,19 +152,19 @@ public class Main {
                         "FROM CaracteristicaComponente ca " +
                         "JOIN Componente c ON c.idComponente = ca.fkComponente " +
                         "JOIN Computador pc ON pc.idComputador = c.fkComputador " +
-                        "WHERE pc.idComputador = 7 " +
+                        "WHERE pc.idComputador = ? " +
                         "AND c.nome LIKE 'Disco' " +
                         "AND ca.nome LIKE 'Memória Disponível'), ' ', 1)) < " +
                         "(SUBSTRING_INDEX((SELECT ca.valor " +
                         "FROM CaracteristicaComponente ca " +
                         "JOIN Componente c ON c.idComponente = ca.fkComponente " +
                         "JOIN Computador pc ON pc.idComputador = c.fkComputador " +
-                        "WHERE pc.idComputador = 7 " +
+                        "WHERE pc.idComputador = ? " +
                         "AND c.nome LIKE 'Disco' " +
                         "AND ca.nome LIKE 'Memória Total'), ' ', 1) * 0.2)";
 
         try {
-            List<ComputadorAlerta> alertas = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(ComputadorAlerta.class));
+            List<ComputadorAlerta> alertas = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(ComputadorAlerta.class), ComputadorAlerta.getIdComputador(), ComputadorAlerta.getIdComputador());
 
             for (ComputadorAlerta alerta : alertas) {
                 String message = "Alerta: O computador com ID " + alerta.getIdComputador() + " tem disponibilidade de disco abaixo de 20%";
@@ -176,10 +176,10 @@ public class Main {
     }
 
     public static class ComputadorAlerta {
-        private int idComputador;
-        private int count;
+        private static int idComputador;
+        private static int count;
 
-        public int getIdComputador() {
+        public static int getIdComputador() {
             return idComputador;
         }
 
@@ -187,7 +187,7 @@ public class Main {
             this.idComputador = idComputador;
         }
 
-        public int getCount() {
+        public static int getCount() {
             return count;
         }
 
