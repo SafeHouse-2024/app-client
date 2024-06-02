@@ -41,25 +41,17 @@ public class Main {
 
         List<Componente> componentes = componenteController.listarComponentes(computador.getIdComputador());
 
-        try {
-            NotificacaoSlack.EnviarNotificacaoSlack("Inicializando captura de dados para o computador " + computador.getIdComputador());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         while (true) {
             System.out.println("Iniciando captura de dados");
 
             try {
-                ExecutarPrograma.executarPrograma(so, user, computador, processos, sudo);
-                Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);
-                Inicializacao.registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
-
                 verificarProcessadorAltoUso();
                 verificarMemoriaAltaUso();
                 verificarDiscoBaixaDisponibilidade();
 
-                NotificacaoSlack.EnviarNotificacaoSlack("Captura de dados realizada com sucesso para o computador " + computador.getIdComputador());
+                ExecutarPrograma.executarPrograma(so, user, computador, processos, sudo);
+                Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);
+                Inicializacao.registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
             } catch (Exception e) {
                 e.printStackTrace();
                 try {
@@ -98,6 +90,7 @@ public class Main {
                     NotificacaoSlack.EnviarNotificacaoSlack(message);
                 }
             }
+            System.out.println(alertas);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,12 +157,9 @@ public class Main {
                         "AND ca.nome LIKE 'Memória Total'), ' ', 1) * 0.2)";
 
         try {
-            List<ComputadorAlerta> alertas = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(ComputadorAlerta.class), ComputadorAlerta.getIdComputador(), ComputadorAlerta.getIdComputador());
-
-            for (ComputadorAlerta alerta : alertas) {
-                String message = "Alerta: O computador com ID " + alerta.getIdComputador() + " tem disponibilidade de disco abaixo de 20%";
-                NotificacaoSlack.EnviarNotificacaoSlack(message);
-            }
+            ComputadorAlerta alerta = jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(ComputadorAlerta.class), ComputadorAlerta.getIdComputador(), ComputadorAlerta.getIdComputador());
+            String message = "Alerta: O computador com ID " + ComputadorAlerta.getIdComputador() + " tem disponibilidade de disco abaixo de 20%";
+            NotificacaoSlack.EnviarNotificacaoSlack(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -183,8 +173,8 @@ public class Main {
             return idComputador;
         }
 
-        public void setIdComputador(int idComputador) {
-            this.idComputador = idComputador;
+        public static void setIdComputador(int idComputador) {
+            ComputadorAlerta.idComputador = idComputador;
         }
 
         public static int getCount() {
@@ -192,7 +182,7 @@ public class Main {
         }
 
         public void setCount(int count) {
-            this.count = count;
+            ComputadorAlerta.count = count;
         }
     }
 }

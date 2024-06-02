@@ -41,9 +41,10 @@ public class DriverManagerLinux {
                     }catch(Exception e){
                         System.out.println("Houve um problema na conexão do banco de dados");
                     }finally{
+                        NotificacaoSlack.EnviarNotificacaoSlack("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
                         Log.generateLog("Um pendrive foi ejetado da máquina");
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             });

@@ -40,14 +40,14 @@ public class TaskManager {
                     getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
 
                     String mensagem = "O processo %s foi fechado".formatted(processo.getNome());
-                    NotificacaoSlack.EnviarNotificacaoSlack(mensagem);
 
                 } catch (Exception e) {
                     System.out.println("Houve um problema de conexão");
                 } finally {
                     try {
+                        NotificacaoSlack.EnviarNotificacaoSlack("O processo %s foi fechado".formatted(processo.getNome()));
                         Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
@@ -73,14 +73,14 @@ public class TaskManager {
                 getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
 
                 String mensagem = "O processo %s foi fechado".formatted(processo.getNome());
-                NotificacaoSlack.EnviarNotificacaoSlack(mensagem);
 
             } catch (Exception e) {
                 System.out.println("Houve um problema de conexão");
             } finally {
                 try {
+                    NotificacaoSlack.EnviarNotificacaoSlack("O processo %s foi fechado".formatted(processo.getNome()));
                     Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
-                } catch (IOException e) {
+                }catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }

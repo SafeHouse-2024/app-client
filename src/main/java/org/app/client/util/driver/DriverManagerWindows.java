@@ -51,13 +51,13 @@ public class DriverManagerWindows {
                     getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", mensagem, computador.getIdComputador());
                     getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", mensagem, computador.getIdComputador());
                     Log.generateLog(mensagem);
-                    NotificacaoSlack.EnviarNotificacaoSlack(mensagem);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 } finally {
                     try {
+                        NotificacaoSlack.EnviarNotificacaoSlack("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
                         Log.generateLog("Um pendrive foi ejetado da máquina");
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
