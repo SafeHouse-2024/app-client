@@ -6,6 +6,7 @@ import org.app.client.Log;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.NomeProcesso;
 import org.app.client.util.ExecutarPrograma;
+import org.app.client.util.notificacoes.NotificacaoSlack;
 import org.buildobjects.process.ExternalProcessFailureException;
 import org.buildobjects.process.ProcBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,9 +38,13 @@ public class TaskManager {
                     getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
                     JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
                     getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+
+                    String mensagem = "O processo %s foi fechado".formatted(processo.getNome());
+                    NotificacaoSlack.EnviarNotificacaoSlack(mensagem);
+
                 } catch (Exception e) {
                     System.out.println("Houve um problema de conexão");
-                }finally {
+                } finally {
                     try {
                         Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
                     } catch (IOException e) {
@@ -67,9 +72,12 @@ public class TaskManager {
                 JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
                 getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
 
+                String mensagem = "O processo %s foi fechado".formatted(processo.getNome());
+                NotificacaoSlack.EnviarNotificacaoSlack(mensagem);
+
             } catch (Exception e) {
                 System.out.println("Houve um problema de conexão");
-            }finally {
+            } finally {
                 try {
                     Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
                 } catch (IOException e) {

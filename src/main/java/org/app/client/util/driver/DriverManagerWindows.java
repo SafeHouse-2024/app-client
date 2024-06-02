@@ -5,6 +5,7 @@ import com.profesorfalken.jpowershell.PowerShellResponse;
 import org.app.client.Log;
 import org.app.client.dao.entity.Computador;
 import org.app.client.util.ExecutarPrograma;
+import org.app.client.util.notificacoes.NotificacaoSlack;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
@@ -46,19 +47,20 @@ public class DriverManagerWindows {
                 try {
                     JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
                     JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
-                    getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
-                    getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
-                    Log.generateLog("Um pendrive foi ejetado da máquina");
+                    String mensagem = "Um pendrive foi ejetado da %s".formatted(computador.getNome());
+                    getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", mensagem, computador.getIdComputador());
+                    getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", mensagem, computador.getIdComputador());
+                    Log.generateLog(mensagem);
+                    NotificacaoSlack.EnviarNotificacaoSlack(mensagem);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
-                }finally {
+                } finally {
                     try {
                         Log.generateLog("Um pendrive foi ejetado da máquina");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-
             }
         });
     }
