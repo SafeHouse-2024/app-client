@@ -133,9 +133,9 @@ public class Inicializacao {
 
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getProcessador().getUso())), processador.getIdComponente());
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9))), memoria.getIdComponente());
-        registroComponenteController.adicionarRegistro("Ping", String.valueOf("%s".formatted(ping.getPing())), rede.getIdComponente());
-        registroComponenteController.adicionarRegistro("Download", String.valueOf("%s".formatted(ping.getDownload())), rede.getIdComponente());
-        registroComponenteController.adicionarRegistro("Upload", String.valueOf("%s".formatted(ping.getUpload())), rede.getIdComponente());
+//        registroComponenteController.adicionarRegistro("Ping", String.valueOf("%s".formatted(ping.getPing())), rede.getIdComponente());
+//        registroComponenteController.adicionarRegistro("Download", String.valueOf("%s".formatted(ping.getDownload())), rede.getIdComponente());
+//        registroComponenteController.adicionarRegistro("Upload", String.valueOf("%s".formatted(ping.getUpload())), rede.getIdComponente());
         System.out.println("Inserindo a medição de RAM no banco de dados");
         System.out.println("A taxa de uso da memória RAM é: %.2f GB".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9)));
         System.out.println("Inserindo a medição de CPU no banco de dados");
