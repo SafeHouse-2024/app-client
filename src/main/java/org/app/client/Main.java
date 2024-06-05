@@ -43,11 +43,8 @@ public class Main {
 
         while (true) {
             System.out.println("Iniciando captura de dados");
-
             try {
-                System.out.println(alertaController.getAllAlertasCPU(computador.getIdComputador()));
-                System.out.println(alertaController.getAllAlertasRAM(computador.getIdComputador()));
-                System.out.println(alertaController.getAllAlertasDisco(computador.getIdComputador()));
+                alertaController.getAllAlertasCPU(computador);
                 ExecutarPrograma.executarPrograma(so, user, computador, processos, sudo);
                 Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);
                 Inicializacao.registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
