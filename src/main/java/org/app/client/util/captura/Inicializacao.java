@@ -1,7 +1,6 @@
 package org.app.client.util.captura;
 
 import com.github.britooo.looca.api.core.Looca;
-import com.github.britooo.looca.api.group.discos.Disco;
 import com.github.britooo.looca.api.group.discos.Volume;
 import com.github.britooo.looca.api.group.rede.RedeInterface;
 import com.github.britooo.looca.api.group.sistema.Sistema;
@@ -10,13 +9,12 @@ import org.app.client.dao.entity.CaracteristicaComponente;
 import org.app.client.dao.entity.Componente;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.UsoSistema;
+import org.app.client.herancas.Ping;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Inicializacao implements Runnable{
 
@@ -41,6 +39,7 @@ public class Inicializacao implements Runnable{
         ComponenteController componenteController = new ComponenteController();
         ComputadorController computadorController = new ComputadorController();
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
+        String so = System.getProperty("os.name");
 
         List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces();
         String macAddress = redes.get(redes.size() - 1).getEnderecoMac();
@@ -51,11 +50,14 @@ public class Inicializacao implements Runnable{
         }catch (EmptyResultDataAccessException e){
             System.out.println("Máquina não cadastrada!");
         }
-
         if (computador.getAtivo().equals("Inativo") && codigoAcesso.equals(computador.getCodigoAcesso())) {
 
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
-            // // Adicionando componentes
+            // Adicionando componentes
+
+            //Rede
+            Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
+            System.out.println("O id do computador é: " + computador.getIdComputador());
 
             // Processador
             Componente processador = componenteController.adicionarComponente("Processador",
@@ -108,9 +110,18 @@ public class Inicializacao implements Runnable{
                 }
             }
 
-            Componente rede = componenteController.adicionarComponente("Rede", computador.getIdComputador());
-            caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
-            caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
+            try{
+                caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
+            }catch(IndexOutOfBoundsException e){
+                System.out.println("Houve um problema no armazenamento do IPV6");
+            }
+
+            try{
+                caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
+            }catch (IndexOutOfBoundsException e){
+                System.out.println("Houve um problema no armazenamento do IPV4");
+            }
+
             System.out.println("O endereço IPV4 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv4().get(0));
             System.out.println("O endereço IPV6 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv6().get(0));
             System.out.println("O sistema operacional da máquina é " + looca.getSistema().getSistemaOperacional());
@@ -128,13 +139,21 @@ public class Inicializacao implements Runnable{
         return computador;
     }
 
-    private static void capturarRegistros(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca) {
+
+
+    public static void capturarRegistros(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca) {
+        Ping ping = new Ping();
         Componente processador = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Processador")).findFirst().get();
         Componente memoria = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Memória")).findFirst().get();
+        Componente rede = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Rede")).findFirst().get();
         List<Componente> discos = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Disco")).toList();
 //        discos.forEach(disco -> pegarDisco(disco, looca));
+
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getProcessador().getUso())), processador.getIdComponente());
         registroComponenteController.adicionarRegistro("Taxa de Uso", String.valueOf("%.2f".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9))), memoria.getIdComponente());
+//        registroComponenteController.adicionarRegistro("Ping", String.valueOf("%s".formatted(ping.getPing())), rede.getIdComponente());
+//        registroComponenteController.adicionarRegistro("Download", String.valueOf("%s".formatted(ping.getDownload())), rede.getIdComponente());
+//        registroComponenteController.adicionarRegistro("Upload", String.valueOf("%s".formatted(ping.getUpload())), rede.getIdComponente());
         System.out.println("Inserindo a medição de RAM no banco de dados");
         System.out.println("A taxa de uso da memória RAM é: %.2f GB".formatted(looca.getMemoria().getEmUso() / Math.pow(10, 9)));
         System.out.println("Inserindo a medição de CPU no banco de dados");
@@ -179,7 +198,6 @@ public class Inicializacao implements Runnable{
         usoSistemaController.atualizarUsoSistema(sistema.getTempoDeAtividade(), usoSistema);
 
         System.out.println("O tempo de atividade do sistema é: " + sistema.getTempoDeAtividade());
-
     }
 
     private void realizarMedicao(){
@@ -201,4 +219,3 @@ public class Inicializacao implements Runnable{
 
     }
 }
-

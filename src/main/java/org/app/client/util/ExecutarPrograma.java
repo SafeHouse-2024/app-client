@@ -5,6 +5,7 @@ import org.app.client.conexao.Conexao;
 import org.app.client.dao.controller.RegistroComponenteController;
 import org.app.client.dao.controller.UsoSistemaController;
 import org.app.client.dao.entity.Componente;
+import org.app.client.conexao.ConexaoSql;
 import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.NomeProcesso;
 import org.app.client.util.captura.Inicializacao;
@@ -16,7 +17,6 @@ import java.util.List;
 
 public class ExecutarPrograma implements Runnable{
 
-    public static Conexao conexao = new Conexao();
     private String so;
     private String user;
     private Computador computador;

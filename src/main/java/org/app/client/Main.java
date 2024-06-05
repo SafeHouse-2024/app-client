@@ -1,19 +1,24 @@
 package org.app.client;
 
 
+
 import java.net.URISyntaxException;
-import java.util.List;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import java.util.List;
 import org.app.client.dao.controller.*;
 import org.app.client.dao.entity.*;
 import org.app.client.login.Login;
-
 import com.github.britooo.looca.api.core.Looca;
 import org.app.client.util.ExecutarPrograma;
 import org.app.client.util.captura.Inicializacao;
+
 import org.app.client.util.websocket.Websocket;
+
+import org.app.client.util.notificacoes.NotificacaoSlack;
+
+
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -39,6 +44,7 @@ public class Main {
         RegistroComponenteController registroComponenteController = new RegistroComponenteController();
         ComponenteController componenteController = new ComponenteController();
         UsoSistemaController usoSistemaController = new UsoSistemaController();
+
         Socket socket;
         try {
             socket = Websocket.initializeWebsocketClient(EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()), computador.getMacAddress());

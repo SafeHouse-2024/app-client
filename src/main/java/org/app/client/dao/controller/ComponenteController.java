@@ -1,34 +1,66 @@
 package org.app.client.dao.controller;
 
 import org.app.client.conexao.Conexao;
+import org.app.client.conexao.ConexaoSql;
 import org.app.client.dao.entity.Componente;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class ComponenteController {
     Conexao conexao = new Conexao();
+    ConexaoSql conexaoSql = new ConexaoSql();
 
     public Componente adicionarComponente(String nome, Integer fkComputador){
-        JdbcTemplate getConexao = conexao.getJdbcTemplate();
+        try{
+            JdbcTemplate getConexao = conexao.getJdbcTemplate();
+            getConexao.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+        }catch (Exception e){
+            System.out.println("Houve um problema com a conexão local");
+        }
 
-        getConexao.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+        try{
+            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+            getConexaoSql.update("INSERT INTO Componente(nome, fkComputador) VALUES(?,?)", nome, fkComputador);
+        }catch (Exception e){
+            System.out.println("Houve um problema com a conexão remota");
+        }
 
-        return pegarComponente(fkComputador);
+
+         return pegarUltimoComponenteInserido(nome, fkComputador);
     }
 
-    private Componente pegarComponente(Integer fkComputador){
-        JdbcTemplate getConexao = conexao.getJdbcTemplate();
-
-        return getConexao.queryForObject("Select * FROM Componente JOIN Computador ON fkComputador = idComputador WHERE fkComputador = ? ORDER BY idComponente desc LIMIT 1", new BeanPropertyRowMapper<>(Componente.class), fkComputador);
+    private Componente pegarUltimoComponenteInserido(String nome, Integer fkComputador) {
+        // Trocar pela requisição remota
+        try {
+            JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
+            return jdbcTemplate.queryForObject(
+                    "SELECT * FROM Componente WHERE nome = ? AND fkComputador = ? ORDER BY idComponente DESC LIMIT 1",
+                    new BeanPropertyRowMapper<>(Componente.class),
+                    nome, fkComputador
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public List<Componente> listarComponentes(Integer fkComputador){
-        JdbcTemplate getConexao = conexao.getJdbcTemplate();
-        List<Componente> componentes = getConexao.query("SELECT * FROM Componente WHERE fkComputador = ?", new BeanPropertyRowMapper<>(Componente.class), fkComputador);
-    
-        return componentes;
-      }
-
+    public List<Componente> listarComponentes(Integer fkComputador) {
+        // Trocar para requisição remota
+        try {
+            JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
+            return jdbcTemplate.query(
+                    "SELECT * FROM Componente WHERE fkComputador = ?",
+                    new BeanPropertyRowMapper<>(Componente.class),
+                    fkComputador
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 }
+

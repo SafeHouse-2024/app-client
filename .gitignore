@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Url para mandar notificações ao slackweb
+webhook_url

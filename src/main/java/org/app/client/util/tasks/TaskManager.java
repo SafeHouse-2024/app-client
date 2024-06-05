@@ -8,11 +8,13 @@ import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.NomeProcesso;
 import org.app.client.util.ExecutarPrograma;
 import org.app.client.util.websocket.Websocket;
+import org.app.client.Log;
+import org.app.client.util.notificacoes.NotificacaoSlack;
 import org.buildobjects.process.ExternalProcessFailureException;
 import org.buildobjects.process.ProcBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
-
 import java.net.URISyntaxException;
+import java.io.IOException;
 import java.util.List;
 
 public class TaskManager {
@@ -30,16 +32,29 @@ public class TaskManager {
     }
 
     private static void tasksKillWindows(Computador computador, List<NomeProcesso> listaProcessosProibidosWindows){
-        JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
         listaProcessosProibidosWindows.forEach(processo -> {
             PowerShellResponse response = PowerShell.executeSingleCommand(comandoWindows.formatted(processo.getNome()));
 
             if(response.getCommandOutput().contains("ÊXITO:")){
-                getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+                try{
+                    JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
+                    getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+                }catch(Exception e){
+                  System.out.println("Houve um problema de conexão Local");
+                }
                 try {
-                    Websocket.defineEventMessage("O processo %s foi fechado da %s".formatted(processo.getNome(), computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
+                    JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
+                    getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+                } catch (Exception e) {
+                    System.out.println("Houve um problema de conexão");
+                } finally {
+                    try {
+                        NotificacaoSlack.EnviarNotificacaoSlack("O processo %s foi fechado".formatted(processo.getNome()));
+                        Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
+                        Websocket.defineEventMessage("O processo %s foi fechado da %s".formatted(processo.getNome(), computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -47,7 +62,6 @@ public class TaskManager {
     }
 
     private static void taskKillLinux(Computador computador, List<NomeProcesso> listaProcessosProibidosLinux){
-        JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
         listaProcessosProibidosLinux.forEach(processo -> {
             String textoInvalido = "";
             try{
@@ -57,11 +71,27 @@ public class TaskManager {
                 textoInvalido = e.getStderr().trim();
             }
             if(textoInvalido.contains("%s: no process found".formatted(processo.getNome()))) return;
-            getConexao.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+            
+            try{
+                JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
+                getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+            }catch(Exception e){
+                System.out.println("Houve um problema de conexão local");
+            }
+          
             try {
-                Websocket.defineEventMessage("O processo %s foi fechado da %s".formatted(processo.getNome(), computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
+                JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
+                getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "O processo %s foi fechado".formatted(processo.getNome()), computador.getIdComputador());
+            } catch (Exception e) {
+                System.out.println("Houve um problema de conexão");
+            } finally {
+                try {
+                    NotificacaoSlack.EnviarNotificacaoSlack("O processo %s foi fechado".formatted(processo.getNome()));
+                    Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
+                    Websocket.defineEventMessage("O processo %s foi fechado da %s".formatted(processo.getNome(), computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
+                }catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
