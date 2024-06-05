@@ -16,7 +16,23 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public class Inicializacao {
+public class Inicializacao implements Runnable{
+
+    private final RegistroComponenteController registroComponenteController;
+    private final List<Componente> componentes;
+    private final Looca looca;
+    private final UsoSistemaController usoSistemaController;
+    private final Integer fkSistemaOperacional;
+    private final Computador computador;
+
+    public Inicializacao(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca, UsoSistemaController usoSistemaController, Integer fkSistemaOperacional, Computador computador) {
+        this.registroComponenteController = registroComponenteController;
+        this.componentes = componentes;
+        this.looca = looca;
+        this.usoSistemaController = usoSistemaController;
+        this.fkSistemaOperacional = fkSistemaOperacional;
+        this.computador = computador;
+    }
 
     public static Computador adicionarEstruturaMaquina(Looca looca, String codigoAcesso, Integer fkSistemaOperacional) {
 
@@ -65,7 +81,7 @@ public class Inicializacao {
             //Memoria RAM
             Componente memoria = componenteController.adicionarComponente("Memória", computador.getIdComputador());
             caracteristicaComponenteController.adicionarCaracteristica("Memória Total",
-                    String.valueOf("%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9))), memoria.getIdComponente());
+                    "%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)), memoria.getIdComponente());
             System.out.println("Sua máquina tem %.2fGB de memória RAM.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
 
             //Disco Rígido
@@ -75,8 +91,8 @@ public class Inicializacao {
                     if(volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9)){
                         Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                         if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(i).getTotal() / Math.pow(10, 9))), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(i).getDisponivel() / Math.pow(10, 9))), disco.getIdComponente());
                             System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
                         }
                     }
@@ -85,8 +101,8 @@ public class Inicializacao {
                     if (volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9) && !volumes.get(i).getUUID().equals(volumeArmazenado.getUUID())) {
                         Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                         if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", String.valueOf("%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9))), disco.getIdComponente());
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", String.valueOf(volumes.get(i).getDisponivel() / Math.pow(10, 9)), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9)), disco.getIdComponente());
+                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(i).getDisponivel() / Math.pow(10, 9))), disco.getIdComponente());
                             System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
                         }
                         volumeArmazenado = volumes.get(i);
@@ -123,6 +139,8 @@ public class Inicializacao {
         return computador;
     }
 
+
+
     public static void capturarRegistros(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca) {
         Ping ping = new Ping();
         Componente processador = componentes.stream().filter(componente -> componente.getNome().equalsIgnoreCase("Processador")).findFirst().get();
@@ -142,7 +160,7 @@ public class Inicializacao {
         System.out.println("A taxa de uso do processador é: %.2f".formatted(looca.getProcessador().getUso()) + "%");
     }
 
-    public static void pegarDisco(Componente componente, Looca looca) {
+    private static void pegarDisco(Componente componente, Looca looca) {
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
         List<CaracteristicaComponente> caracteristicaComponentes = caracteristicaComponenteController.listarCaracteristicas(componente.getIdComponente());
         List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
@@ -162,7 +180,7 @@ public class Inicializacao {
         System.out.println("A memória disponível do disco é: " + volumes.get(0).getDisponivel());
     }
 
-    public static void registrarUso(UsoSistemaController usoSistemaController, Sistema sistema, Integer fkSistemaOperacional, Computador computador){
+    private static void registrarUso(UsoSistemaController usoSistemaController, Sistema sistema, Integer fkSistemaOperacional, Computador computador){
         UsoSistema usoSistema = null;
         try{
             usoSistema = usoSistemaController.pegarUsoSistema(computador);
@@ -180,5 +198,24 @@ public class Inicializacao {
         usoSistemaController.atualizarUsoSistema(sistema.getTempoDeAtividade(), usoSistema);
 
         System.out.println("O tempo de atividade do sistema é: " + sistema.getTempoDeAtividade());
+    }
+
+    private void realizarMedicao(){
+        capturarRegistros(registroComponenteController, componentes, looca);
+        registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
+    }
+
+
+    @Override
+    public void run() {
+        while(true){
+            realizarMedicao();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 }

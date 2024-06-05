@@ -1,18 +1,24 @@
 package org.app.client;
 
+
+
+import java.net.URISyntaxException;
+
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import java.util.List;
 import org.app.client.dao.controller.*;
-import org.app.client.dao.entity.Componente;
-import org.app.client.dao.entity.Computador;
-import org.app.client.dao.entity.NomeProcesso;
+import org.app.client.dao.entity.*;
 import org.app.client.login.Login;
 import com.github.britooo.looca.api.core.Looca;
 import org.app.client.util.ExecutarPrograma;
 import org.app.client.util.captura.Inicializacao;
+
+import org.app.client.util.websocket.Websocket;
+
 import org.app.client.util.notificacoes.NotificacaoSlack;
-import org.app.client.conexao.Conexao;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
+
+
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -38,27 +44,36 @@ public class Main {
         RegistroComponenteController registroComponenteController = new RegistroComponenteController();
         ComponenteController componenteController = new ComponenteController();
         UsoSistemaController usoSistemaController = new UsoSistemaController();
-        AlertaController alertaController = new AlertaController();
+
+        Socket socket;
+        try {
+            socket = Websocket.initializeWebsocketClient(EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()), computador.getMacAddress());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+
         List<Componente> componentes = componenteController.listarComponentes(computador.getIdComputador());
 
-        while (true) {
-            System.out.println("Iniciando captura de dados");
-            try {
-                alertaController.getAllAlertasCPU(computador);
-                ExecutarPrograma.executarPrograma(so, user, computador, processos, sudo);
-                Inicializacao.capturarRegistros(registroComponenteController, componentes, looca);
-                Inicializacao.registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
+        ExecutarPrograma executarPrograma = new ExecutarPrograma(so, user, computador, processos, sudo);
+        Thread executarInovacao = new Thread(executarPrograma);
+        Inicializacao inicializacao = new Inicializacao(registroComponenteController, componentes, looca, usoSistemaController, fkSistemaOperacional, computador);
+        Thread iniciarMedicao = new Thread(inicializacao);
+        iniciarMedicao.start();
+        executarInovacao.start();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                try {
-                    NotificacaoSlack.EnviarNotificacaoSlack("Erro ao capturar dados para o computador " + computador.getIdComputador() + ": " + e.getMessage());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        socket.on("receive_message_%s".formatted(looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size() - 1).getEnderecoMac()), new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                    Integer contador = executarPrograma.getContador();
+                    if(contador % 2 != 0){
+                        System.out.println("Modo de segurança desativado");
+                    }else{
+                        System.out.println("Modo de segurança ativado");
+                        executarPrograma.notifyThread();
+                    }
+                    executarPrograma.setContador(contador += 1);
             }
-
-            Thread.sleep(5000);
-        }
+        });
     }
 }

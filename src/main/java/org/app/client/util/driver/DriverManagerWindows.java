@@ -2,13 +2,17 @@ package org.app.client.util.driver;
 
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import org.app.client.dao.controller.DarkStoreController;
+import org.app.client.dao.controller.EmpresaController;
+import org.app.client.util.websocket.Websocket;
+import java.io.File;
+import java.net.URISyntaxException;
 import org.app.client.Log;
 import org.app.client.dao.entity.Computador;
 import org.app.client.util.ExecutarPrograma;
 import org.app.client.util.notificacoes.NotificacaoSlack;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,19 +48,22 @@ public class DriverManagerWindows {
         driversInvalidos().forEach(drive -> {
             PowerShellResponse response = comandoPowerShell(drive);
             if(response.getCommandOutput().isEmpty()){
-                try {
+                try{
                     JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
-                    JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
-                    String mensagem = "Um pendrive foi ejetado da %s".formatted(computador.getNome());
                     getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", mensagem, computador.getIdComputador());
+                }catch(Exception e){
+                  throw new RuntimeException(e);
+                }
+                try {
+                    JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
                     getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", mensagem, computador.getIdComputador());
-                    Log.generateLog(mensagem);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 } finally {
                     try {
                         NotificacaoSlack.EnviarNotificacaoSlack("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
                         Log.generateLog("Um pendrive foi ejetado da máquina");
+                        Websocket.defineEventMessage("Um pendrive foi ejetado da %s".formatted(computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
