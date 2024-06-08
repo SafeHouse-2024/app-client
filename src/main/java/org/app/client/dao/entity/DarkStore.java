@@ -92,6 +92,20 @@ public class DarkStore {
     }
 
     @Override
+    public String toString() {
+        return "DarkStore{" +
+                "nome='" + nome + '\'' +
+                ", idDarkStore=" + idDarkStore +
+                ", rua='" + rua + '\'' +
+                ", numero='" + numero + '\'' +
+                ", complemento='" + complemento + '\'' +
+                ", cep='" + cep + '\'' +
+                ", uf='" + uf + '\'' +
+                ", fkEmpresa=" + fkEmpresa +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

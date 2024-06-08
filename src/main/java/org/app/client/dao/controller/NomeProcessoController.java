@@ -1,6 +1,7 @@
 package org.app.client.dao.controller;
 
 import org.app.client.conexao.Conexao;
+import org.app.client.conexao.ConexaoSql;
 import org.app.client.dao.entity.NomeProcesso;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class NomeProcessoController {
 
-    Conexao conexao = new Conexao();
+    ConexaoSql conexao = new ConexaoSql();
 
     public List<NomeProcesso> listarProcessos(Integer fkSistemaOperacional){
         // trocar para banco remoto

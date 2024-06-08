@@ -17,12 +17,12 @@ public class RegistroComponenteController {
             System.out.println("Houve problemas de conexão com o banco local");
         }
 
-//        try{
-//            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
-//            getConexaoSql.update("INSERT INTO RegistroComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
-//        }catch (Exception e){
-//            System.out.println("Houve problemas de conexão com o banco remoto");
-//        }
+        try{
+            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+            getConexaoSql.update("INSERT INTO RegistroComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
+        }catch (Exception e){
+            System.out.println("Houve problemas de conexão com o banco remoto");
+        }
 
     }
 

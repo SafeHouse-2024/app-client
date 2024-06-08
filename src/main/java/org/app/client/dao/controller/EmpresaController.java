@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.*;
 public class EmpresaController {
 
   public static Empresa fetchEmpresa(Integer idComputador) {
-    JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
+    JdbcTemplate getConexao = ExecutarPrograma.conexaoSql.getJdbcTemplate();
     return getConexao.queryForObject("SELECT e.* FROM Empresa e JOIN DarkStore d ON d.fkEmpresa = e.idEmpresa JOIN Computador c ON c.fkDarkStore = d.idDarkStore WHERE c.idComputador = ?",
         new BeanPropertyRowMapper<>(Empresa.class), idComputador);
     }

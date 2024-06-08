@@ -4,6 +4,7 @@ import com.github.britooo.looca.api.core.Looca;
 import com.github.britooo.looca.api.group.discos.Volume;
 import com.github.britooo.looca.api.group.rede.RedeInterface;
 import com.github.britooo.looca.api.group.sistema.Sistema;
+import org.app.client.conexao.Conexao;
 import org.app.client.dao.controller.*;
 import org.app.client.dao.entity.CaracteristicaComponente;
 import org.app.client.dao.entity.Componente;
@@ -11,10 +12,15 @@ import org.app.client.dao.entity.Computador;
 import org.app.client.dao.entity.UsoSistema;
 import org.app.client.herancas.Ping;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Inicializacao implements Runnable{
 
@@ -43,18 +49,23 @@ public class Inicializacao implements Runnable{
         CaracteristicaComponenteController caracteristicaComponenteController = new CaracteristicaComponenteController();
         String so = System.getProperty("os.name");
 
-        List<RedeInterface> redes = looca.getRede().getGrupoDeInterfaces().getInterfaces();
-        String macAddress = redes.get(redes.size() - 1).getEnderecoMac();
+        RedeInterface interfaceRede = looca.getRede().getGrupoDeInterfaces().getInterfaces().stream().filter(r -> r.getNome().equals("enX0")).findFirst().orElse(looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size()-1));
+        String macAddress = interfaceRede.getEnderecoMac();
         System.out.println("O macAddress da máquina é " + macAddress);
         Computador computador = new Computador();
+        System.out.println(computador);
         try{
             computador = computadorController.buscarMaquina(macAddress);
+            salvarMaquinaLocalCasoNaoExista(computador);
         }catch (EmptyResultDataAccessException e){
             System.out.println("Máquina não cadastrada!");
         }
+
         if (computador.getAtivo().equals("Inativo") && codigoAcesso.equals(computador.getCodigoAcesso())) {
 
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
+            Map<Componente, Map<String, Object>> valoresCaracteristicas = new HashMap<>();
+            Map<String, Object> valores = new HashMap<>();
             // Adicionando componentes
 
             //Rede
@@ -64,28 +75,10 @@ public class Inicializacao implements Runnable{
             // Processador
             Componente processador = componenteController.adicionarComponente("Processador",
                     computador.getIdComputador());
-            caracteristicaComponenteController.adicionarCaracteristica("Fabricante",
-                    looca.getProcessador().getFabricante(), processador.getIdComponente());
-                System.out.println("O fabricante do seu processador é " + looca.getProcessador().getFabricante());
-            caracteristicaComponenteController.adicionarCaracteristica("Nome", looca.getProcessador().getNome(),
-                    processador.getIdComponente());
-                System.out.println("O nome do seu processador é " + looca.getProcessador().getNome());
-            caracteristicaComponenteController.adicionarCaracteristica("Frequência",
-                    looca.getProcessador().getFrequencia().toString(), processador.getIdComponente());
-                System.out.println("A sua frequência é " + looca.getProcessador().getFrequencia());
-            caracteristicaComponenteController.adicionarCaracteristica("Núcleos Físicos",
-                    looca.getProcessador().getNumeroCpusFisicas().toString(), processador.getIdComponente());
-                System.out.println("A quantidade de núcleos físicos são: " + looca.getProcessador().getNumeroCpusFisicas());
-            caracteristicaComponenteController.adicionarCaracteristica("Núcleos Lógicos",
-                    looca.getProcessador().getNumeroCpusLogicas().toString(), processador.getIdComponente());
-                System.out.println("A quantidade de núcleos lógicos são: " + looca.getProcessador().getNumeroCpusLogicas());
 
             //Memoria RAM
             Componente memoria = componenteController.adicionarComponente("Memória", computador.getIdComputador());
-            caracteristicaComponenteController.adicionarCaracteristica("Memória Total",
-                    "%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)), memoria.getIdComponente());
-            System.out.println("Sua máquina tem %.2fGB de memória RAM.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
-
+            salvarMaquinaLocalCasoNaoExista(computador);
             //Disco Rígido
             Volume volumeArmazenado = volumes.get(0);
             for (int i = 0; i < volumes.size(); i++) {
@@ -93,18 +86,21 @@ public class Inicializacao implements Runnable{
                     if(volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9)){
                         Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                         if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(i).getTotal() / Math.pow(10, 9))), disco.getIdComponente());
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(i).getDisponivel() / Math.pow(10, 9))), disco.getIdComponente());
+                            valores.put("Memória Total", "%.2f GB".formatted((volumes.get(i).getTotal() / Math.pow(10, 9))));
+                            valores.put("idComponente", disco.getIdComponente());
+                            valores.put("Memória Disponível", "%.2f GB".formatted((volumes.get(i).getDisponivel() / Math.pow(10, 9))));
                             System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
                         }
+                        valoresCaracteristicas.put(disco, valores);
                     }
                 }
                 if(i > 0) {
                     if (volumes.get(i).getTotal() > 0 && volumes.get(i).getTotal() > 128 * Math.pow(10, 9) && !volumes.get(i).getUUID().equals(volumeArmazenado.getUUID())) {
                         Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
                         if (volumes.get(i).getTotal() >= Math.pow(10, 9)) {
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(i).getTotal()) / Math.pow(10, 9)), disco.getIdComponente());
-                            caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(i).getDisponivel() / Math.pow(10, 9))), disco.getIdComponente());
+                            valores.put("Memória Total", "%.2f GB".formatted((volumes.get(i).getTotal() / Math.pow(10, 9))));
+                            valores.put("idComponente", disco.getIdComponente());
+                            valores.put("Memória Disponível", "%.2f GB".formatted((volumes.get(i).getDisponivel() / Math.pow(10, 9))));
                             System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
                         }
                         volumeArmazenado = volumes.get(i);
@@ -112,20 +108,51 @@ public class Inicializacao implements Runnable{
                 }
             }
 
+            caracteristicaComponenteController.adicionarCaracteristica("Fabricante",
+                    looca.getProcessador().getFabricante(), processador.getIdComponente());
+            System.out.println("O fabricante do seu processador é " + looca.getProcessador().getFabricante());
+
+            caracteristicaComponenteController.adicionarCaracteristica("Nome", looca.getProcessador().getNome(),
+                    processador.getIdComponente());
+            System.out.println("O nome do seu processador é " + looca.getProcessador().getNome());
+
+            caracteristicaComponenteController.adicionarCaracteristica("Frequência",
+                    looca.getProcessador().getFrequencia().toString(), processador.getIdComponente());
+            System.out.println("A sua frequência é " + looca.getProcessador().getFrequencia());
+
+            caracteristicaComponenteController.adicionarCaracteristica("Núcleos Físicos",
+                    looca.getProcessador().getNumeroCpusFisicas().toString(), processador.getIdComponente());
+            System.out.println("A quantidade de núcleos físicos são: " + looca.getProcessador().getNumeroCpusFisicas());
+
+            caracteristicaComponenteController.adicionarCaracteristica("Núcleos Lógicos",
+                    looca.getProcessador().getNumeroCpusLogicas().toString(), processador.getIdComponente());
+            System.out.println("A quantidade de núcleos lógicos são: " + looca.getProcessador().getNumeroCpusLogicas());
+
+            caracteristicaComponenteController.adicionarCaracteristica("Memória Total",
+                    "%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)), memoria.getIdComponente());
+            System.out.println("Sua máquina tem %.2fGB de memória RAM.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
+
+            for(Map.Entry<Componente, Map<String, Object>> caracteristicas: valoresCaracteristicas.entrySet()){
+                Componente componente = caracteristicas.getKey();
+                for(Map.Entry<String, Object> caracteristica: caracteristicas.getValue().entrySet()){
+                    caracteristicaComponenteController.adicionarCaracteristica(caracteristica.getKey(), caracteristica.getValue().toString(), componente.getIdComponente());
+                }
+            }
+
             try{
-                caracteristicaComponenteController.adicionarCaracteristica("IPV6", redes.get(redes.size()-1).getEnderecoIpv6().get(0), rede.getIdComponente());
+                caracteristicaComponenteController.adicionarCaracteristica("IPV6", interfaceRede.getEnderecoIpv6().get(0), rede.getIdComponente());
             }catch(IndexOutOfBoundsException e){
                 System.out.println("Houve um problema no armazenamento do IPV6");
             }
 
             try{
-                caracteristicaComponenteController.adicionarCaracteristica("IPV4", redes.get(redes.size()-1).getEnderecoIpv4().get(0), rede.getIdComponente());
+                caracteristicaComponenteController.adicionarCaracteristica("IPV4", interfaceRede.getEnderecoIpv4().get(0), rede.getIdComponente());
             }catch (IndexOutOfBoundsException e){
                 System.out.println("Houve um problema no armazenamento do IPV4");
             }
 
-            System.out.println("O endereço IPV4 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv4().get(0));
-            System.out.println("O endereço IPV6 da sua máquina é: " + redes.get(redes.size()-1).getEnderecoIpv6().get(0));
+            System.out.println("O endereço IPV4 da sua máquina é: " + interfaceRede.getEnderecoIpv4().get(0));
+            System.out.println("O endereço IPV6 da sua máquina é: " + interfaceRede.getEnderecoIpv6().get(0));
             System.out.println("O sistema operacional da máquina é " + looca.getSistema().getSistemaOperacional());
 
             computadorController.inserirSistemaOperacional(fkSistemaOperacional, computador);
@@ -193,7 +220,7 @@ public class Inicializacao implements Runnable{
             usoSistemaController.adicionarUsoSistema(sistema.getInicializado(), sistema.getTempoDeAtividade(), fkSistemaOperacional, computador);
             return;
         }
-        if(!sistema.getInicializado().equals(ZonedDateTime.of(usoSistema.getDataInicializacao(), ZoneId.of("America/Sao_Paulo")).toInstant())){
+        if(!sistema.getInicializado().equals(ZonedDateTime.of(usoSistema.getDataInicializacao(), ZoneId.of("UTC")).toInstant())){
             usoSistemaController.adicionarUsoSistema(sistema.getInicializado(), sistema.getTempoDeAtividade(), fkSistemaOperacional, computador);
             return;
         }
@@ -211,6 +238,25 @@ public class Inicializacao implements Runnable{
         alertaController.getAllAlertasCPU(computador);
         alertaController.getAllAlertasRAM(computador);
         alertaController.getAllAlertasDisco(computador);
+    }
+
+    public static void salvarMaquinaLocalCasoNaoExista(Computador computador){
+        Conexao conexao = new Conexao();
+
+        JdbcTemplate getConexao = conexao.getJdbcTemplate();
+        Computador computadorLocal = null;
+        try {
+            computadorLocal = getConexao.queryForObject("SELECT * FROM Computador WHERE macAddress = ?", new BeanPropertyRowMapper<>(Computador.class), computador.getIdComputador());
+        }catch (EmptyResultDataAccessException e){
+        }
+        if(computadorLocal == null){
+            List<Componente> componentes = ComponenteController.listarComponentes(computador.getIdComputador());
+            if(!componentes.isEmpty()){
+                Computador computadorInserido = ComputadorController.inserirMaquinaLocal(computador);
+                componentes.forEach(componente -> ComponenteController.adicionarComponenteLocalmente(componente.getNome(), computadorInserido.getIdComputador(), componente.getIdComponente()));
+                System.out.println("Máquina cadastrada com sucesso");
+            }
+        }
     }
 
     @Override

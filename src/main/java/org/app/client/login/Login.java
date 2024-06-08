@@ -1,6 +1,7 @@
 package org.app.client.login;
 
 import org.app.client.conexao.Conexao;
+import org.app.client.conexao.ConexaoSql;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -9,7 +10,7 @@ import java.util.Scanner;
 
 public class Login {
 
-    Conexao conexao = new Conexao();
+    ConexaoSql conexaoSql = new ConexaoSql();
 
 
     public String autenticar(Integer fkSistemaOperacional) {
@@ -52,7 +53,7 @@ public class Login {
         String usuario = null;
         // Trocar para conexão remota
         try{
-            JdbcTemplate getConexao = conexao.getJdbcTemplate();
+            JdbcTemplate getConexao = conexaoSql.getJdbcTemplate();
             usuario = getConexao.queryForObject("SELECT u.email FROM Usuario u JOIN Computador c ON c.fkUsuario = u.idUsuario WHERE u.email = ? AND u.senha = ? AND c.codigoAcesso = ? AND u.tipo = ?", new BeanPropertyRowMapper<>(String.class), email, senha, codigoAcesso, "Maquina");
         }catch (Exception e){
             System.out.println("Não foi possível se autenticar, preencha os campos corretamente");

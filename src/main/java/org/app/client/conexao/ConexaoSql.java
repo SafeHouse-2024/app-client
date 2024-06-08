@@ -11,7 +11,7 @@ public class ConexaoSql {
         BasicDataSource dataSource = new BasicDataSource();
 
         dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        dataSource.setUrl("jdbc:sqlserver://100.26.238.36:1433;encrypt=false;databaseName=spectra");
+        dataSource.setUrl("jdbc:sqlserver://52.70.29.252:1433;encrypt=false;databaseName=spectra");
         dataSource.setUsername("sa");
         dataSource.setPassword("sptech1234@");
 

@@ -16,7 +16,7 @@ public class CaracteristicaComponenteController{
             JdbcTemplate getConexao = conexao.getJdbcTemplate();
             getConexao.update("INSERT INTO CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
         }catch (Exception e){
-            System.out.println("Houve um proble de conexão com o banco local");
+            System.out.println("Houve um problema de conexão com o banco local");
         }
 
         try{
@@ -31,18 +31,25 @@ public class CaracteristicaComponenteController{
     }
 
     public List<CaracteristicaComponente> listarCaracteristicas(Integer fkComponente){
-        JdbcTemplate getConexao = conexao.getJdbcTemplate();
-        List<CaracteristicaComponente> caracteristicas = getConexao.query("SELECT * FROM CaracteristicaComponente WHERE fkComponente = ?", new BeanPropertyRowMapper<>(CaracteristicaComponente.class), fkComponente);
+        JdbcTemplate getConexao = conexaoSql.getJdbcTemplate();
 
-        return caracteristicas;
+        return getConexao.query("SELECT * FROM CaracteristicaComponente WHERE fkComponente = ?", new BeanPropertyRowMapper<>(CaracteristicaComponente.class), fkComponente);
     }
 
     public void atualizarValorCaracteristica(String valor, Integer idCaracteristica){
-        JdbcTemplate getConexao = conexao.getJdbcTemplate();
-//        JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
 
-        getConexao.update("UPDATE CaracteristicaComponente SET valor = ? WHERE idCaracteristicaComponente = ?", valor, idCaracteristica);
-//        getConexaoSql.update("UPDATE CaracteristicaComponente SET valor = ? WHERE idCaracteristicaComponente = ?", valor, idCaracteristica);
+        try {
+            JdbcTemplate getConexao = conexao.getJdbcTemplate();
+            getConexao.update("UPDATE CaracteristicaComponente SET valor = ? WHERE idCaracteristicaComponente = ?", valor, idCaracteristica);
+        }catch (Exception e){
+            System.out.println("Houve um problema de conexão local");
+        }
 
+        try {
+            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+            getConexaoSql.update("UPDATE CaracteristicaComponente SET valor = ? WHERE idCaracteristicaComponente = ?", valor, idCaracteristica);
+        }catch (Exception e){
+            System.out.println("Houve um problema de conexão remoto");
+        }
     }
 }
