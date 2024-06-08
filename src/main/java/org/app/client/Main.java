@@ -12,6 +12,7 @@ import org.app.client.dao.entity.*;
 import org.app.client.login.Login;
 import com.github.britooo.looca.api.core.Looca;
 import org.app.client.util.ExecutarPrograma;
+import org.app.client.util.captura.CapturaRede;
 import org.app.client.util.captura.Inicializacao;
 
 import org.app.client.util.websocket.Websocket;
@@ -44,6 +45,7 @@ public class Main {
         RegistroComponenteController registroComponenteController = new RegistroComponenteController();
         ComponenteController componenteController = new ComponenteController();
         UsoSistemaController usoSistemaController = new UsoSistemaController();
+        AlertaController alertaController = new AlertaController();
 
         Socket socket;
         try {
@@ -54,13 +56,17 @@ public class Main {
 
 
         List<Componente> componentes = componenteController.listarComponentes(computador.getIdComputador());
+        Componente componenteRede = componentes.stream().filter(componente -> componente.getNome().equals("Rede")).findFirst().get();
 
+        CapturaRede capturaRede = new CapturaRede(registroComponenteController, componenteRede);
+        Thread buscarRede = new Thread(capturaRede);
         ExecutarPrograma executarPrograma = new ExecutarPrograma(so, user, computador, processos, sudo);
         Thread executarInovacao = new Thread(executarPrograma);
-        Inicializacao inicializacao = new Inicializacao(registroComponenteController, componentes, looca, usoSistemaController, fkSistemaOperacional, computador);
+        Inicializacao inicializacao = new Inicializacao(registroComponenteController, componentes, looca, usoSistemaController, fkSistemaOperacional, computador, alertaController);
         Thread iniciarMedicao = new Thread(inicializacao);
         iniciarMedicao.start();
         executarInovacao.start();
+        buscarRede.start();
 
         socket.on("receive_message_%s".formatted(looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size() - 1).getEnderecoMac()), new Emitter.Listener() {
             @Override

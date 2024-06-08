@@ -24,14 +24,16 @@ public class Inicializacao implements Runnable{
     private final UsoSistemaController usoSistemaController;
     private final Integer fkSistemaOperacional;
     private final Computador computador;
+    private final AlertaController alertaController;
 
-    public Inicializacao(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca, UsoSistemaController usoSistemaController, Integer fkSistemaOperacional, Computador computador) {
+    public Inicializacao(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca, UsoSistemaController usoSistemaController, Integer fkSistemaOperacional, Computador computador, AlertaController alertaController) {
         this.registroComponenteController = registroComponenteController;
         this.componentes = componentes;
         this.looca = looca;
         this.usoSistemaController = usoSistemaController;
         this.fkSistemaOperacional = fkSistemaOperacional;
         this.computador = computador;
+        this.alertaController = alertaController;
     }
 
     public static Computador adicionarEstruturaMaquina(Looca looca, String codigoAcesso, Integer fkSistemaOperacional) {
@@ -205,13 +207,19 @@ public class Inicializacao implements Runnable{
         registrarUso(usoSistemaController, looca.getSistema(), fkSistemaOperacional, computador);
     }
 
+    public void buscarAlertas(){
+        alertaController.getAllAlertasCPU(computador);
+        alertaController.getAllAlertasRAM(computador);
+        alertaController.getAllAlertasDisco(computador);
+    }
 
     @Override
     public void run() {
         while(true){
             realizarMedicao();
+//            buscarAlertas();
             try {
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

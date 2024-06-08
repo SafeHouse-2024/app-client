@@ -50,13 +50,13 @@ public class DriverManagerWindows {
             if(response.getCommandOutput().isEmpty()){
                 try{
                     JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
-                    getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", mensagem, computador.getIdComputador());
+                    getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
                 }catch(Exception e){
                   throw new RuntimeException(e);
                 }
                 try {
                     JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
-                    getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", mensagem, computador.getIdComputador());
+                    getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?,?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 } finally {

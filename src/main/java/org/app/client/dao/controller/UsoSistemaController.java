@@ -22,12 +22,12 @@ public class UsoSistemaController {
         }catch (Exception e){
             System.out.println("Houve problema de conexão com o banco local");
         }
-        try{
-            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
-            getConexaoSql.update("INSERT INTO UsoSistema (dataInicializacao, tempoAtividadeMinutos, fkSistemaOperacional, fkComputador) VALUES (?, ?, ?, ?)", tempoInicializacao, tempoMinutos, fkSistemaOperacional, computador.getIdComputador());
-        }catch (Exception e){
-            System.out.println("Houve problema de conexão com o banco remoto");
-        }
+//        try{
+//            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+//            getConexaoSql.update("INSERT INTO UsoSistema (dataInicializacao, tempoAtividadeMinutos, fkSistemaOperacional, fkComputador) VALUES (?, ?, ?, ?)", tempoInicializacao, tempoMinutos, fkSistemaOperacional, computador.getIdComputador());
+//        }catch (Exception e){
+//            System.out.println("Houve problema de conexão com o banco remoto");
+//        }
 
     }
 
@@ -41,12 +41,12 @@ public class UsoSistemaController {
             System.out.println("Houve problema de conexão com o banco local");
         }
 
-        try{
-            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
-            getConexaoSql.update("UPDATE UsoSistema SET tempoAtividadeMinutos = ? WHERE idUsoSistema = ?", tempoMinutos, usoSistema.getIdUsoSistema());
-        }catch (Exception e){
-            System.out.println("Houve problema de conexão com o banco remoto");
-        }
+//        try{
+//            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
+//            getConexaoSql.update("UPDATE UsoSistema SET tempoAtividadeMinutos = ? WHERE idUsoSistema = ?", tempoMinutos, usoSistema.getIdUsoSistema());
+//        }catch (Exception e){
+//            System.out.println("Houve problema de conexão com o banco remoto");
+//        }
 
     }
 

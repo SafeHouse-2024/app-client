@@ -14,11 +14,16 @@ public class CaracteristicaComponenteController{
     public void adicionarCaracteristica(String nome, String valor, Integer fkComponente){
         try{
             JdbcTemplate getConexao = conexao.getJdbcTemplate();
-            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
             getConexao.update("INSERT INTO CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
+        }catch (Exception e){
+            System.out.println("Houve um proble de conexão com o banco local");
+        }
+
+        try{
+            JdbcTemplate getConexaoSql = conexaoSql.getJdbcTemplate();
             getConexaoSql.update("INSERT INTO CaracteristicaComponente(nome, valor, fkComponente) VALUES (?,?,?)", nome, valor, fkComponente);
         }catch (Exception e){
-            e.getMessage();
+            System.out.println("Houve um problema de conexão com o banco remoto");
         }
 
 

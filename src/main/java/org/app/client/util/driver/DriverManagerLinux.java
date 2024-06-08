@@ -39,20 +39,20 @@ public class DriverManagerLinux {
                     
                     try{
                       JdbcTemplate getConexao = ExecutarPrograma.conexao.getJdbcTemplate();
-                      getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", mensagem.formatted(computador.getNome()), computador.getIdComputador());
+                      getConexao.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
                     }catch(Exception e){
                       System.out.println("Houve um problema na conexão do banco de dados local");
                     }
                     try{
                         JdbcTemplate getConexaoSql = ExecutarPrograma.conexaoSql.getJdbcTemplate();
-                        getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", mensagem.formatted(computador.getNome()), computador.getIdComputador());
+                        getConexaoSql.update("INSERT INTO Log (descricao, fkComputador) VALUES (?, ?)", "Um pendrive foi ejetado da %s".formatted(computador.getNome()), computador.getIdComputador());
                     }catch(Exception e){
                         System.out.println("Houve um problema na conexão do banco de dados remoto");
                     }finally{
                       try{
-                        Log.generateLog(mensagem.formatted(computador.getNome()));
-                        NotificacaoSlack.EnviarNotificacaoSlack(mensagem.formatted(computador.getNome()));
-                        Websocket.defineEventMessage(mensagem.formatted(computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
+                        Log.generateLog("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
+                        NotificacaoSlack.EnviarNotificacaoSlack("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
+                        Websocket.defineEventMessage("Um pendrive foi ejetado da %s".formatted(computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
                       }catch(Exception e){
                         throw new RuntimeException(e);
                       }

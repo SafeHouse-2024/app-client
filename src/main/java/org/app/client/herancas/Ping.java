@@ -34,15 +34,24 @@ public class Ping extends CaracteristicaComponenteController {
     }
 
     public String getPing() {
-        return ping;
+        if(ping == null){
+            return "0.0";
+        }
+        return ping.split(" ")[1];
     }
 
     public String getDownload() {
-        return download;
+        if(download == null){
+            return "0.0";
+        }
+        return download.split(" ")[1];
     }
 
     public String getUpload() {
-        return upload;
+        if(upload == null){
+            return "0.0";
+        }
+        return upload.split(" ")[1];
     }
 }
 
