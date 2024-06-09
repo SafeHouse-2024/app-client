@@ -12,5 +12,6 @@ public class CapturaAlertas {
         alertaController.getAllAlertasCPU(computador);
         alertaController.getAllAlertasRAM(computador);
         alertaController.getAllAlertasDisco(computador);
+        alertaController.getAllAlertasRede(computador);
     }
 }

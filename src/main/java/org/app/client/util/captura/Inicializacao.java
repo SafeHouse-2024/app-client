@@ -53,15 +53,14 @@ public class Inicializacao implements Runnable{
         String macAddress = interfaceRede.getEnderecoMac();
         System.out.println("O macAddress da máquina é " + macAddress);
         Computador computador = new Computador();
-        System.out.println(computador);
         try{
             computador = computadorController.buscarMaquina(macAddress);
-            salvarMaquinaLocalCasoNaoExista(computador);
+            System.out.println(computador);
         }catch (EmptyResultDataAccessException e){
             System.out.println("Máquina não cadastrada!");
         }
 
-        if (computador.getAtivo().equals("Inativo") && codigoAcesso.equals(computador.getCodigoAcesso())) {
+        if (computador.getAtivo().equals("Inativo") && codigoAcesso.equalsIgnoreCase(computador.getCodigoAcesso())) {
 
             List<Volume> volumes = looca.getGrupoDeDiscos().getVolumes();
             Map<Componente, Map<String, Object>> valoresCaracteristicas = new HashMap<>();
@@ -137,6 +136,13 @@ public class Inicializacao implements Runnable{
                 for(Map.Entry<String, Object> caracteristica: caracteristicas.getValue().entrySet()){
                     caracteristicaComponenteController.adicionarCaracteristica(caracteristica.getKey(), caracteristica.getValue().toString(), componente.getIdComponente());
                 }
+            }
+
+            if(valoresCaracteristicas.isEmpty()){
+                Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
+                caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(0).getTotal() / Math.pow(10, 9))), disco.getIdComponente());
+                caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(0).getTotal() / Math.pow(10,9))), disco.getIdComponente());
+                System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
             }
 
             try{
@@ -263,7 +269,7 @@ public class Inicializacao implements Runnable{
     public void run() {
         while(true){
             realizarMedicao();
-//            buscarAlertas();
+            buscarAlertas();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

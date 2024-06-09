@@ -7,7 +7,7 @@ import java.util.Objects;
 public class UsoSistema {
 
     private Integer idUsoSistema;
-    private LocalDateTime dataInicializacao;
+    private LocalDateTime dataInicializacao = LocalDateTime.now();
     private Integer tempoAtividadeMinutos;
     private Integer fkSistemaOperacional;
     private Integer fkComputador;

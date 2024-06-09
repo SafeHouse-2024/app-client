@@ -5,12 +5,12 @@ import java.util.Objects;
 public class Alerta {
 
     private Integer idComputador;
-    private Integer quantidade;
+    private Double quantidade;
 
     public Alerta() {
     }
 
-    public Alerta(Integer idComputador, Integer quantidade) {
+    public Alerta(Integer idComputador, Double quantidade) {
         this.idComputador = idComputador;
         this.quantidade = quantidade;
     }
@@ -23,11 +23,11 @@ public class Alerta {
         this.idComputador = idComputador;
     }
 
-    public Integer getQuantidade() {
+    public Double getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(Integer quantidade) {
+    public void setQuantidade(Double quantidade) {
         this.quantidade = quantidade;
     }
 
