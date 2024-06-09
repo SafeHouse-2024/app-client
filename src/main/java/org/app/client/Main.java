@@ -2,6 +2,7 @@ package org.app.client;
 
 
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import com.github.britooo.looca.api.group.rede.RedeInterface;
@@ -27,7 +28,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         String so = System.getProperty("os.name");
         String user = System.getProperty("user.name");

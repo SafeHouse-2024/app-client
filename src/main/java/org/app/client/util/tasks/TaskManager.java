@@ -2,6 +2,7 @@ package org.app.client.util.tasks;
 
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import org.app.client.LogType;
 import org.app.client.dao.controller.DarkStoreController;
 import org.app.client.dao.controller.EmpresaController;
 import org.app.client.dao.entity.Computador;
@@ -19,9 +20,14 @@ import java.util.List;
 
 public class TaskManager {
 
-    // para descobrir o valor da imagem de um processo use no seu cmd o comando tasklist;
     private static String comandoWindows = "cmd /c taskkill /F /IM %s /T";
     private static String comandoLinux = "killall -KILL %s";
+
+    private final Log log;
+
+    public TaskManager(Log log) {
+        this.log = new Log(LogType.SEGURANCA);
+    }
 
     public static void taskKill(String so, Computador computador, List<NomeProcesso> processos){
         if(so.toUpperCase().contains("win".toUpperCase())){

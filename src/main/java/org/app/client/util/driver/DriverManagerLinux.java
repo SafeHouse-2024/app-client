@@ -1,6 +1,7 @@
 package org.app.client.util.driver;
 
 import org.app.client.Log;
+import org.app.client.LogType;
 import org.app.client.conexao.Conexao;
 import org.app.client.dao.controller.DarkStoreController;
 import org.app.client.dao.controller.EmpresaController;
@@ -19,10 +20,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DriverManagerLinux {
+
+    private final Log log;
+
+    public DriverManagerLinux(Log log) {
+        this.log = new Log(LogType.SEGURANCA);
+    }
   
     String mensagem = "Um pendrive foi ejetado da %s";
 
-    // Remove os drivers inválidos
     public static void removerDriversInvalidos(String user, Computador computador, String sudo){
 
         File pendrivesLinux = new File("/media/%s".formatted(user));
@@ -32,7 +38,6 @@ public class DriverManagerLinux {
                 try {
                     Process p = Runtime.getRuntime().exec("sudo -S eject /media/%s/%s".formatted(user, pendrive));
                     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-                    //Passar a senha do sudo
                     bw.write(sudo);
                     bw.flush();
                     bw.close();

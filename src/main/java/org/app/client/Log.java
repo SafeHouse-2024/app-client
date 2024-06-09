@@ -16,6 +16,11 @@ public class Log {
     private static BufferedWriter bw;
     private static FileWriter fw;
     private static Path logFilePath;
+    private static LogType logType;
+
+    public Log(LogType logType) {
+        this.logType = logType;
+    }
 
     public static void generateLog(String mensagem) throws IOException {
         if (bw == null || Files.size(logFilePath) >= MAX_SIZE) {
@@ -60,8 +65,13 @@ public class Log {
             Files.createDirectory(logDirectoryPath);
         }
 
-        String logFileName = "log_de_seguranca_" + fileCount + ".txt";
-        logFilePath = logDirectoryPath.resolve(logFileName);
+        if (logType == LogType.INICIALIZACAO) {
+            String logFileName = "log_inicializacao_" + fileCount + ".txt";
+            logFilePath = logDirectoryPath.resolve(logFileName);
+        } else {
+            String logFileName = "log_de_seguranca_" + fileCount + ".txt";
+            logFilePath = logDirectoryPath.resolve(logFileName);
+        }
 
         fw = new FileWriter(logFilePath.toFile(), true);
         bw = new BufferedWriter(fw);

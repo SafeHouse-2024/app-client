@@ -2,6 +2,7 @@ package org.app.client.util.driver;
 
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import org.app.client.LogType;
 import org.app.client.dao.controller.DarkStoreController;
 import org.app.client.dao.controller.EmpresaController;
 import org.app.client.util.websocket.Websocket;
@@ -22,28 +23,30 @@ import java.util.stream.Collectors;
 
 public class DriverManagerWindows {
 
-    private static Map<String, Boolean> driverPermitidos = new HashMap<>(); // Mapa para armazenar os drivers permitidos
+    private static Map<String, Boolean> driverPermitidos = new HashMap<>();
 
-    // Verifica se o driver existe
+    private final Log log;
+
+    public DriverManagerWindows(Log log) {
+        this.log = new Log(LogType.SEGURANCA);
+    }
+
     private static boolean verificarDriver(String nomeDriver){
         return new File(nomeDriver).exists();
     }
 
-    // Atualiza a lista de drivers conectados
     private static void atualizarDriversConectados(){
         for (int i = 0; i <= 25; i++){
             driverPermitidos.put(String.valueOf((char)('A' + i)), verificarDriver( (char)('A' + i) + ":/"));
         }
     }
 
-    // Mostra os drivers permitidos
     public static void mostrarDrivers(){
         for (int i = 0; i <= 25; i++) {
             System.out.println(driverPermitidos.get(String.valueOf((char)('A' + i))));
         }
     }
 
-    // Remove os drivers inválidos
     public static void removerDriversInvalidos(Computador computador){
         driversInvalidos().forEach(drive -> {
             PowerShellResponse response = comandoPowerShell(drive);
@@ -76,12 +79,10 @@ public class DriverManagerWindows {
         return PowerShell.executeSingleCommand("(New-Object -comObject Shell.Application).Namespace(17).ParseName(\"D:\").InvokeVerb(\"Eject\")".formatted(driver));
     }
 
-    // Retorna uma lista de drivers inválidos
     private static List<String> driversInvalidos(){
         atualizarDriversConectados();
-        // Drivers que virão do banco de dados;
-        List<String> driversValidos = List.of("C"); // Lista de drivers válidos
-        List<String> driversExistentes = new ArrayList<>(); // Lista de drivers existentes
+        List<String> driversValidos = List.of("C");
+        List<String> driversExistentes = new ArrayList<>();
         driverPermitidos.forEach((key, value) -> {
             if (value) {
                 driversExistentes.add(key);
