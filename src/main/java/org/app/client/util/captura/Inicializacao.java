@@ -34,7 +34,6 @@ public class Inicializacao implements Runnable{
     private final Integer fkSistemaOperacional;
     private final Computador computador;
     private final AlertaController alertaController;
-    private final Log log;
 
 
     public Inicializacao(RegistroComponenteController registroComponenteController, List<Componente> componentes, Looca looca, UsoSistemaController usoSistemaController, Integer fkSistemaOperacional, Computador computador, AlertaController alertaController) {
@@ -45,7 +44,6 @@ public class Inicializacao implements Runnable{
         this.fkSistemaOperacional = fkSistemaOperacional;
         this.computador = computador;
         this.alertaController = alertaController;
-        this.log = new Log(LogType.INICIALIZACAO);
     }
 
     public static Computador adicionarEstruturaMaquina(Looca looca, String codigoAcesso, Integer fkSistemaOperacional) throws IOException {
@@ -57,13 +55,12 @@ public class Inicializacao implements Runnable{
 
         RedeInterface interfaceRede = looca.getRede().getGrupoDeInterfaces().getInterfaces().stream().filter(r -> r.getNome().equals("enX0")).findFirst().orElse(looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size()-1));
         String macAddress = interfaceRede.getEnderecoMac();
-        Log.generateLog("O macAddress da máquina é %s".formatted(macAddress));
         Computador computador = new Computador();
         try{
             computador = computadorController.buscarMaquina(macAddress);
             System.out.println(computador);
         }catch (EmptyResultDataAccessException e){
-            Log.generateLog("Máquina não cadastrada");
+            Log.generateLog("Máquina não cadastrada", LogType.INICIALIZACAO);
         }
 
         if (computador.getAtivo().equals("Inativo") && codigoAcesso.equalsIgnoreCase(computador.getCodigoAcesso())) {
@@ -109,22 +106,22 @@ public class Inicializacao implements Runnable{
             }
 
             caracteristicaComponenteController.adicionarCaracteristica("Fabricante", looca.getProcessador().getFabricante(), processador.getIdComponente());
-            Log.generateLog("O fabricante do seu processador é %s".formatted(looca.getProcessador().getFabricante()));
+            Log.generateLog("O fabricante do seu processador é %s".formatted(looca.getProcessador().getFabricante()), LogType.INICIALIZACAO);
 
             caracteristicaComponenteController.adicionarCaracteristica("Nome", looca.getProcessador().getNome(), processador.getIdComponente());
-            Log.generateLog("O nome do seu processador é %s".formatted(looca.getProcessador().getNome()));
+            Log.generateLog("O nome do seu processador é %s".formatted(looca.getProcessador().getNome()), LogType.INICIALIZACAO);
 
             caracteristicaComponenteController.adicionarCaracteristica("Frequência", looca.getProcessador().getFrequencia().toString(), processador.getIdComponente());
-            Log.generateLog("A sua frequência é %d".formatted(looca.getProcessador().getFrequencia()));
+            Log.generateLog("A sua frequência é %d".formatted(looca.getProcessador().getFrequencia()), LogType.INICIALIZACAO);
 
             caracteristicaComponenteController.adicionarCaracteristica("Núcleos Físicos", looca.getProcessador().getNumeroCpusFisicas().toString(), processador.getIdComponente());
-            Log.generateLog("Quantidade de núcleos físicos: %d".formatted(looca.getProcessador().getNumeroCpusFisicas()));
+            Log.generateLog("Quantidade de núcleos físicos: %d".formatted(looca.getProcessador().getNumeroCpusFisicas()), LogType.INICIALIZACAO);
 
             caracteristicaComponenteController.adicionarCaracteristica("Núcleos Lógicos", looca.getProcessador().getNumeroCpusLogicas().toString(), processador.getIdComponente());
-            Log.generateLog("Quantidade de núcleos lógicos: %d".formatted(looca.getProcessador().getNumeroCpusLogicas()));
+            Log.generateLog("Quantidade de núcleos lógicos: %d".formatted(looca.getProcessador().getNumeroCpusLogicas()), LogType.INICIALIZACAO);
 
             caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)), memoria.getIdComponente());
-            Log.generateLog("Sua máquina tem %.2fGB de memória RAM.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
+            Log.generateLog("Sua máquina tem %.2fGB de memória RAM.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)), LogType.INICIALIZACAO);
 
             for(Map.Entry<Componente, Map<String, Object>> caracteristicas: valoresCaracteristicas.entrySet()){
                 Componente componente = caracteristicas.getKey();
@@ -140,7 +137,7 @@ public class Inicializacao implements Runnable{
                 ComponenteController.adicionarComponenteLocalmente("Disco", computadorLocal.getIdComputador(), disco.getIdComponente());
                 caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(0).getTotal() / Math.pow(10, 9))), disco.getIdComponente());
                 caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(0).getTotal() / Math.pow(10,9))), disco.getIdComponente());
-                Log.generateLog("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
+                Log.generateLog("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)), LogType.INICIALIZACAO);
                 System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getGrupoDeDiscos().getVolumes().get(0) .getTotal()/ Math.pow(10, 9)));
             }
 
@@ -156,9 +153,9 @@ public class Inicializacao implements Runnable{
                 System.out.println("Houve um problema no armazenamento do IPV4");
             }
 
-            Log.generateLog("O endereço IPV4 da sua máquina é: " + interfaceRede.getEnderecoIpv4().get(0));
-            Log.generateLog("O endereço IPV6 da sua máquina é: " + interfaceRede.getEnderecoIpv6().get(0));
-            Log.generateLog("O sistema operacional da máquina é " + looca.getSistema().getSistemaOperacional());
+            Log.generateLog("O endereço IPV4 da sua máquina é: " + interfaceRede.getEnderecoIpv4().get(0), LogType.INICIALIZACAO);
+            Log.generateLog("O endereço IPV6 da sua máquina é: " + interfaceRede.getEnderecoIpv6().get(0), LogType.INICIALIZACAO);
+            Log.generateLog("O sistema operacional da máquina é " + looca.getSistema().getSistemaOperacional(), LogType.INICIALIZACAO);
 
             computadorController.inserirSistemaOperacional(fkSistemaOperacional, computador);
             computadorController.ativarMaquina(computador.getIdComputador());

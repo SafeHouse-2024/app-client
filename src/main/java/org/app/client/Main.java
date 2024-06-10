@@ -76,7 +76,7 @@ public class Main {
         Inicializacao inicializacao = new Inicializacao(registroComponenteController, componentes, looca, usoSistemaController, fkSistemaOperacional, computador, alertaController);
         Thread iniciarMedicao = new Thread(inicializacao);
         iniciarMedicao.start();
-//        executarInovacao.start();
+        executarInovacao.start();
         buscarRede.start();
 
         socket.on("receive_message_%s".formatted(looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size() - 1).getEnderecoMac()), new Emitter.Listener() {

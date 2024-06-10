@@ -153,6 +153,8 @@ public class AlertaController {
         List<AtualizarAlerta> ultimaMedicao = jdbcTemplate.query("SELECT TOP 1 l.dataLog as 'data' FROM Log l JOIN Computador c ON l.fkComputador = c.idComputador WHERE c.idComputador = ? AND (l.descricao LIKE '%estado%' AND l.descricao LIKE '%CPU%') ORDER BY l.idLog DESC", new BeanPropertyRowMapper<>(AtualizarAlerta.class), computador.getIdComputador());
 
         if(ultimaMedicao.isEmpty()){
+            ultimaMedicao.add(new AtualizarAlerta(LocalDateTime.now(ZoneId.of("UTC"))));
+        }else if(ultimaMedicao.isEmpty() && !status.equals("Normal")){
             jdbcTemplate.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Uso excessivo de CPU na máquina %s com estado %s".formatted(computador.getNome(), status), computador.getIdComputador());
             System.out.println("Valor de ocorrências: %.2f, status %s".formatted(alerta.getQuantidade(), status));
             try {
@@ -160,7 +162,6 @@ public class AlertaController {
             } catch (Exception e) {
                 System.out.println("Houve um problema de conexão com o slack");
             }
-            return;
         }
 
         if((status.equals("Crítico") || status.equals("Alerta")) && (ChronoUnit.MINUTES.between(ultimaMedicao.get(0).getData(), LocalDateTime.now(ZoneId.of("UTC"))) > 5)){
@@ -192,18 +193,18 @@ public class AlertaController {
         List<AtualizarAlerta> ultimaMedicao = jdbcTemplate.query("SELECT TOP 1 l.dataLog as 'data' FROM Log l JOIN Computador c ON l.fkComputador = c.idComputador WHERE c.idComputador = ? AND (l.descricao LIKE '%estado%' AND l.descricao LIKE '%RAM%') ORDER BY l.idLog DESC", new BeanPropertyRowMapper<>(AtualizarAlerta.class), computador.getIdComputador());
 
         if(ultimaMedicao.isEmpty()){
+            ultimaMedicao.add(new AtualizarAlerta(LocalDateTime.now(ZoneId.of("UTC"))));
+        }else if(ultimaMedicao.isEmpty() && !status.equals("Normal")){
             jdbcTemplate.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Uso excessivo de RAM na máquina %s com estado %s".formatted(computador.getNome(), status), computador.getIdComputador());
             try {
                 NotificacaoSlack.EnviarNotificacaoSlack("Uso excessivo de RAM na máquina %s com estado %s".formatted(computador.getNome(), status));
             } catch (Exception e) {
                 System.out.println("Houve um problema de conexão com o slack");
             }
-            return;
         }
 
         if((status.equals("Crítico") || status.equals("Alerta")) && (ChronoUnit.MINUTES.between(ultimaMedicao.get(0).getData(), LocalDateTime.now(ZoneId.of("UTC"))) > 5)){
 
-            System.out.println();
             jdbcTemplate.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Uso excessivo de RAM na máquina %s com estado %s".formatted(computador.getNome(), status), computador.getIdComputador());
             try {
                 NotificacaoSlack.EnviarNotificacaoSlack("Uso excessivo de RAM na máquina %s com estado %s".formatted(computador.getNome(), status));
@@ -227,6 +228,8 @@ public class AlertaController {
         List<AtualizarAlerta> ultimaMedicao = jdbcTemplate.query("SELECT TOP 1 l.dataLog as 'data' FROM Log l JOIN Computador c ON l.fkComputador = c.idComputador WHERE c.idComputador = ? AND (l.descricao LIKE '%estado%' AND l.descricao LIKE '%Disco%') ORDER BY l.idLog DESC", new BeanPropertyRowMapper<>(AtualizarAlerta.class), computador.getIdComputador());
 
         if(ultimaMedicao.isEmpty()){
+            ultimaMedicao.add(new AtualizarAlerta(LocalDateTime.now(ZoneId.of("UTC"))));
+        }else if(ultimaMedicao.isEmpty() && !status.equals("Normal")){
             jdbcTemplate.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Uso excessivo de Disco na máquina %s com estado %s".formatted(computador.getNome(), status), computador.getIdComputador());
 
             try {
@@ -264,15 +267,15 @@ public class AlertaController {
         List<AtualizarAlerta> ultimaMedicao = jdbcTemplate.query("SELECT TOP 1 l.dataLog as 'data' FROM Log l JOIN Computador c ON l.fkComputador = c.idComputador WHERE c.idComputador = ? AND (l.descricao LIKE '%estado%' AND l.descricao LIKE '%Rede%') ORDER BY l.idLog DESC", new BeanPropertyRowMapper<>(AtualizarAlerta.class), computador.getIdComputador());
 
         if(ultimaMedicao.isEmpty()){
-            jdbcTemplate.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Rede instável na máquina %s com estado %s".formatted(computador.getNome(), status), computador.getIdComputador());
+            ultimaMedicao.add(new AtualizarAlerta(LocalDateTime.now(ZoneId.of("UTC"))));
+        }else if(ultimaMedicao.isEmpty() && !status.equals("Normal")){
+            jdbcTemplate.update("INSERT INTO Log(descricao, fkComputador) VALUES (?,?)", "Uso excessivo de Disco na máquina %s com estado %s".formatted(computador.getNome(), status), computador.getIdComputador());
 
             try {
-                NotificacaoSlack.EnviarNotificacaoSlack("Rede instável na máquina %s com estado %s".formatted(computador.getNome(), status));
+                NotificacaoSlack.EnviarNotificacaoSlack("Uso excessivo de Disco na máquina %s com estado %s".formatted(computador.getNome(), status));
             } catch (Exception e) {
                 System.out.println("Houve um problema de conexão com o slack");
             }
-
-            return;
         }
 
         if(status.equals("Crítico") || status.equals("Alerta") && ChronoUnit.MINUTES.between(ultimaMedicao.get(0).getData(), LocalDateTime.now(ZoneId.of("UTC"))) > 5){

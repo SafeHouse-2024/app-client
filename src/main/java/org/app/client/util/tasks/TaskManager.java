@@ -23,11 +23,6 @@ public class TaskManager {
     private static String comandoWindows = "cmd /c taskkill /F /IM %s /T";
     private static String comandoLinux = "killall -KILL %s";
 
-    private final Log log;
-
-    public TaskManager(Log log) {
-        this.log = new Log(LogType.SEGURANCA);
-    }
 
     public static void taskKill(String so, Computador computador, List<NomeProcesso> processos){
         if(so.toUpperCase().contains("win".toUpperCase())){
@@ -56,7 +51,7 @@ public class TaskManager {
                 } finally {
                     try {
                         NotificacaoSlack.EnviarNotificacaoSlack("O processo %s foi fechado".formatted(processo.getNome()));
-                        Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
+                        Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()), LogType.SEGURANCA);
                         Websocket.defineEventMessage("O processo %s foi fechado da %s".formatted(processo.getNome(), computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -93,7 +88,7 @@ public class TaskManager {
             } finally {
                 try {
                     NotificacaoSlack.EnviarNotificacaoSlack("O processo %s foi fechado".formatted(processo.getNome()));
-                    Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()));
+                    Log.generateLog("O processo %s foi fechado".formatted(processo.getNome()), LogType.SEGURANCA);
                     Websocket.defineEventMessage("O processo %s foi fechado da %s".formatted(processo.getNome(), computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
                 }catch (Exception e) {
                     throw new RuntimeException(e);

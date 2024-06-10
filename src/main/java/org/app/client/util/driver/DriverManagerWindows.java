@@ -25,12 +25,6 @@ public class DriverManagerWindows {
 
     private static Map<String, Boolean> driverPermitidos = new HashMap<>();
 
-    private final Log log;
-
-    public DriverManagerWindows(Log log) {
-        this.log = new Log(LogType.SEGURANCA);
-    }
-
     private static boolean verificarDriver(String nomeDriver){
         return new File(nomeDriver).exists();
     }
@@ -65,7 +59,7 @@ public class DriverManagerWindows {
                 } finally {
                     try {
                         NotificacaoSlack.EnviarNotificacaoSlack("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
-                        Log.generateLog("Um pendrive foi ejetado da máquina");
+                        Log.generateLog("Um pendrive foi ejetado da máquina", LogType.SEGURANCA);
                         Websocket.defineEventMessage("Um pendrive foi ejetado da %s".formatted(computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
                     } catch (Exception e) {
                         throw new RuntimeException(e);

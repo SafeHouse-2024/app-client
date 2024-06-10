@@ -16,15 +16,10 @@ public class Log {
     private static BufferedWriter bw;
     private static FileWriter fw;
     private static Path logFilePath;
-    private static LogType logType;
 
-    public Log(LogType logType) {
-        this.logType = logType;
-    }
-
-    public static void generateLog(String mensagem) throws IOException {
+    public static void generateLog(String mensagem, LogType logType) throws IOException {
         if (bw == null || Files.size(logFilePath) >= MAX_SIZE) {
-            openNewLogFile();
+            openNewLogFile(logType);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -38,7 +33,7 @@ public class Log {
         System.out.println("Log Gerado com sucesso!");
     }
 
-    private static void openNewLogFile() throws IOException {
+    private static void openNewLogFile(LogType logType) throws IOException {
         String nomeUser = System.getProperty("user.name");
         String so = System.getProperty("os.name");
 
@@ -80,8 +75,20 @@ public class Log {
         } else {
             String logFileName = "log_de_seguranca_" + fileCount + ".txt";
             logFilePath = logDirectoryPath.resolve(logFileName);
+
+            String message = "/****************/\n" +
+                    "* Nome da Empresa: SPECTRA\n" +
+                    "* Tipo de Documento: Confidencial\n" +
+                    "* \n" +
+                    "* Este documento contém informações confidenciais\n" +
+                    "* da empresa SPECTRA. A divulgação, distribuição,\n" +
+                    "* ou cópia deste documento é estritamente proibida\n" +
+                    "* sem autorização prévia.\n" +
+                    "/****************/\n\n";
             fw = new FileWriter(logFilePath.toFile(), true);
             bw = new BufferedWriter(fw);
+            bw.write(message);
+            bw.flush();
         }
 
         fileCount++;

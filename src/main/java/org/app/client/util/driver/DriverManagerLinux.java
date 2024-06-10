@@ -20,12 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DriverManagerLinux {
-
-    private final Log log;
-
-    public DriverManagerLinux(Log log) {
-        this.log = new Log(LogType.SEGURANCA);
-    }
   
     String mensagem = "Um pendrive foi ejetado da %s";
 
@@ -55,7 +49,7 @@ public class DriverManagerLinux {
                         System.out.println("Houve um problema na conexão do banco de dados remoto");
                     }finally{
                       try{
-                        Log.generateLog("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
+                        Log.generateLog("Um pendrive foi ejetado da %s".formatted(computador.getNome()), LogType.SEGURANCA);
                         NotificacaoSlack.EnviarNotificacaoSlack("Um pendrive foi ejetado da %s".formatted(computador.getNome()));
                         Websocket.defineEventMessage("Um pendrive foi ejetado da %s".formatted(computador.getNome()), EmpresaController.fetchEmpresa(computador.getIdComputador()), DarkStoreController.fetchDarkStore(computador.getIdComputador()));
                       }catch(Exception e){
