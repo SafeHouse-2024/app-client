@@ -39,11 +39,6 @@ public class Log {
     }
 
     private static void openNewLogFile() throws IOException {
-        if (bw != null) {
-            bw.close();
-            fw.close();
-        }
-
         String nomeUser = System.getProperty("user.name");
         String so = System.getProperty("os.name");
 
@@ -68,13 +63,27 @@ public class Log {
         if (logType == LogType.INICIALIZACAO) {
             String logFileName = "log_inicializacao_" + fileCount + ".txt";
             logFilePath = logDirectoryPath.resolve(logFileName);
+
+            String message = "/****************/\n" +
+                    "* Nome da Empresa: SPECTRA\n" +
+                    "* Tipo de Documento: Confidencial\n" +
+                    "* \n" +
+                    "* Este documento contém informações confidenciais\n" +
+                    "* da empresa SPECTRA. A divulgação, distribuição,\n" +
+                    "* ou cópia deste documento é estritamente proibida\n" +
+                    "* sem autorização prévia.\n" +
+                    "/****************/\n\n";
+            fw = new FileWriter(logFilePath.toFile(), true);
+            bw = new BufferedWriter(fw);
+            bw.write(message);
+            bw.flush();
         } else {
             String logFileName = "log_de_seguranca_" + fileCount + ".txt";
             logFilePath = logDirectoryPath.resolve(logFileName);
+            fw = new FileWriter(logFilePath.toFile(), true);
+            bw = new BufferedWriter(fw);
         }
 
-        fw = new FileWriter(logFilePath.toFile(), true);
-        bw = new BufferedWriter(fw);
         fileCount++;
     }
 }
