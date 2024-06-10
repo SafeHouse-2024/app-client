@@ -78,8 +78,8 @@ public class Inicializacao implements Runnable{
             Componente processador = componenteController.adicionarComponente("Processador", computador.getIdComputador());
 
             Componente memoria = componenteController.adicionarComponente("Memória", computador.getIdComputador());
-            salvarMaquinaLocalCasoNaoExista(computador);
-
+            Computador computadorLocal = salvarMaquinaLocalCasoNaoExista(computador);
+            //Disco Rígido
             Volume volumeArmazenado = volumes.get(0);
             for (int i = 0; i < volumes.size(); i++) {
                 if(i == 0){
@@ -129,15 +129,19 @@ public class Inicializacao implements Runnable{
             for(Map.Entry<Componente, Map<String, Object>> caracteristicas: valoresCaracteristicas.entrySet()){
                 Componente componente = caracteristicas.getKey();
                 for(Map.Entry<String, Object> caracteristica: caracteristicas.getValue().entrySet()){
-                    caracteristicaComponenteController.adicionarCaracteristica(caracteristica.getKey(), caracteristica.getValue().toString(), componente.getIdComponente());
+                    if(!caracteristica.getKey().equals("idComponente")){
+                        caracteristicaComponenteController.adicionarCaracteristica(caracteristica.getKey(), caracteristica.getValue().toString(), componente.getIdComponente());
+                    }
                 }
             }
 
             if(valoresCaracteristicas.isEmpty()){
                 Componente disco = componenteController.adicionarComponente("Disco", computador.getIdComputador());
+                ComponenteController.adicionarComponenteLocalmente("Disco", computadorLocal.getIdComputador(), disco.getIdComponente());
                 caracteristicaComponenteController.adicionarCaracteristica("Memória Total", "%.2f GB".formatted((volumes.get(0).getTotal() / Math.pow(10, 9))), disco.getIdComponente());
                 caracteristicaComponenteController.adicionarCaracteristica("Memória Disponível", "%.2f GB".formatted((volumes.get(0).getTotal() / Math.pow(10,9))), disco.getIdComponente());
                 Log.generateLog("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getMemoria().getTotal() / Math.pow(10, 9)));
+                System.out.println("Seu disco tem %.2fGB de armazenamento.".formatted(looca.getGrupoDeDiscos().getVolumes().get(0) .getTotal()/ Math.pow(10, 9)));
             }
 
             try{
@@ -241,23 +245,28 @@ public class Inicializacao implements Runnable{
         alertaController.getAllAlertasDisco(computador);
     }
 
-    public static void salvarMaquinaLocalCasoNaoExista(Computador computador){
+    public static Computador salvarMaquinaLocalCasoNaoExista(Computador computador){
         Conexao conexao = new Conexao();
 
         JdbcTemplate getConexao = conexao.getJdbcTemplate();
         Computador computadorLocal = null;
         try {
-            computadorLocal = getConexao.queryForObject("SELECT * FROM Computador WHERE macAddress = ?", new BeanPropertyRowMapper<>(Computador.class), computador.getIdComputador());
+            computadorLocal = getConexao.queryForObject("SELECT * FROM Computador WHERE macAddress = ?", new BeanPropertyRowMapper<>(Computador.class), computador.getMacAddress());
         }catch (EmptyResultDataAccessException e){
         }
         if(computadorLocal == null){
             List<Componente> componentes = ComponenteController.listarComponentes(computador.getIdComputador());
             if(!componentes.isEmpty()){
                 Computador computadorInserido = ComputadorController.inserirMaquinaLocal(computador);
+                computadorLocal = computadorInserido;
                 componentes.forEach(componente -> ComponenteController.adicionarComponenteLocalmente(componente.getNome(), computadorInserido.getIdComputador(), componente.getIdComponente()));
                 System.out.println("Máquina cadastrada com sucesso");
+            }else{
+                computadorLocal = new Computador();
             }
         }
+
+        return computadorLocal;
     }
 
     @Override

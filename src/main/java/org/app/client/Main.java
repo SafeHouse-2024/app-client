@@ -23,24 +23,18 @@ import org.app.client.util.captura.AtualizarAlerta;
 import org.app.client.util.captura.CapturaRede;
 import org.app.client.util.captura.Inicializacao;
 
+import org.app.client.util.notificacoes.NotificacaoSlack;
 import org.app.client.util.websocket.Websocket;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws Exception {
 
         String so = System.getProperty("os.name");
         String user = System.getProperty("user.name");
         Looca looca = new Looca();
 
-        ConexaoSql conexao = new ConexaoSql();
-
-        JdbcTemplate jdbcTemplate = conexao.getJdbcTemplate();
-        List<AtualizarAlerta> ultimaMedicao = jdbcTemplate.query("SELECT TOP 1 l.dataLog as 'data' FROM Log l JOIN Computador c ON l.fkComputador = c.idComputador WHERE c.idComputador = ? AND (l.descricao LIKE '%estado%' AND l.descricao LIKE '%CPU%') ORDER BY l.idLog DESC", new BeanPropertyRowMapper<>(AtualizarAlerta.class), 8);
-        System.out.println(ultimaMedicao.get(0).getData());
-        System.out.println(LocalDateTime.now(ZoneId.of("UTC")));
-        System.out.println(ChronoUnit.MINUTES.between(ultimaMedicao.get(0).getData(), LocalDateTime.now(ZoneId.of("UTC"))) > 5);
         RedeInterface interfaceRede = looca.getRede().getGrupoDeInterfaces().getInterfaces().stream().filter(r -> r.getNome().equals("enX0")).findFirst().orElse(looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size()-1));
         String macAddress = interfaceRede.getEnderecoMac();
         System.out.println("O macAddress da máquina é " + macAddress);
@@ -82,7 +76,7 @@ public class Main {
         Inicializacao inicializacao = new Inicializacao(registroComponenteController, componentes, looca, usoSistemaController, fkSistemaOperacional, computador, alertaController);
         Thread iniciarMedicao = new Thread(inicializacao);
         iniciarMedicao.start();
-        executarInovacao.start();
+//        executarInovacao.start();
         buscarRede.start();
 
         socket.on("receive_message_%s".formatted(looca.getRede().getGrupoDeInterfaces().getInterfaces().get(looca.getRede().getGrupoDeInterfaces().getInterfaces().size() - 1).getEnderecoMac()), new Emitter.Listener() {
